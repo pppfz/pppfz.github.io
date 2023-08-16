@@ -11,6 +11,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     
+        
+            <link rel="preconnect" href="https://npm.elemecdn.com" crossorigin>
+        
+    
     <!--- Seo Part-->
     
     <link rel="canonical" href="http://blog.pppfz.com/2023/08/15/test/"/>
@@ -20,7 +24,7 @@
     
         <meta name="description" content="一、内网穿透原理1、内网穿透利用各种隧道技术，以网络防火墙允许的协议，绕过网络防火墙的封锁，实现访问被封锁的目标网络。（1）端口转发：将发往外网某个端口的数据完全转发给内网，是外网到内网的单向通信。 （2）端口映射：将内网IP的某个端口映射到公网IP的某个端口，实现通过公网IP+端口直接正向访问内网，端口映射实现双向通信。 2、隧道技术是一种通过使用互联网络的基础设施在网络之间传递数据的方式。红队">
 <meta property="og:type" content="article">
-<meta property="og:title" content="test">
+<meta property="og:title" content="内网穿透原理">
 <meta property="og:url" content="http://blog.pppfz.com/2023/08/15/test/index.html">
 <meta property="og:site_name" content="PPPFZ&#39;s Blog">
 <meta property="og:description" content="一、内网穿透原理1、内网穿透利用各种隧道技术，以网络防火墙允许的协议，绕过网络防火墙的封锁，实现访问被封锁的目标网络。（1）端口转发：将发往外网某个端口的数据完全转发给内网，是外网到内网的单向通信。 （2）端口映射：将内网IP的某个端口映射到公网IP的某个端口，实现通过公网IP+端口直接正向访问内网，端口映射实现双向通信。 2、隧道技术是一种通过使用互联网络的基础设施在网络之间传递数据的方式。红队">
@@ -36,9 +40,9 @@
 <meta property="og:image" content="https://blog.pppfz.com/assets/8b255818a2441bd8ce9aeea99c1e5921.png">
 <meta property="og:image" content="https://blog.pppfz.com/assets/9224ffea073e7e5bff89bc8811e3d545.png">
 <meta property="article:published_time" content="2023-08-15T08:04:43.000Z">
-<meta property="article:modified_time" content="2023-08-15T08:09:43.265Z">
+<meta property="article:modified_time" content="2023-08-16T11:32:30.456Z">
 <meta property="article:author" content="PPPFZ">
-<meta property="article:tag" content="test类">
+<meta property="article:tag" content="网络">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.pppfz.com/assets/b91e23bec64ad1d45a15d13a9b5c5cc6.png">
     
@@ -52,22 +56,16 @@
     
     <title>
         
-            test -
+            内网穿透原理 -
         
         PPPFZ BLOG
     </title>
     
 <link rel="stylesheet" href="/css/style.css">
 
-    
-<link rel="stylesheet" href="/fonts/fonts.css">
-
-    
-<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
-
-    
-<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
-
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/fonts/fonts.css">
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/fonts/Satoshi/satoshi.css">
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/fonts/Chillax/chillax.css">
     <!--- Font Part-->
     
     
@@ -79,24 +77,16 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"blog.pppfz.com","root":"/","language":"zh-CN"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"PPPFZ BLOG","subtitle":{"text":["cheer for me"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"PPPFZ BLOG","subtitle":{"text":["cheer for me"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Status":{"path":"https://status.pppfz.com/","icon":"fa-regular fa-chart-bar"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about/about.html","Github":"https://github.com/pppfz","ChatGPT":"https://gpt.pppfz.com","Friends":"/friends/friends.html"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":10},"tags":{"enable":true,"limit":10}},"footerStart":"2022/8/17 11:45:14"};
     Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     Global.data_config = {"masonry":false};
   </script>
     
     <!--- Fontawesome Part-->
-    
-<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
-
-    
-<link rel="stylesheet" href="/fontawesome/brands.min.css">
-
-    
-<link rel="stylesheet" href="/fontawesome/solid.min.css">
-
-    
-<link rel="stylesheet" href="/fontawesome/regular.min.css">
-
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/fontawesome/fontawesome.min.css">
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/fontawesome/brands.min.css">
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/fontawesome/solid.min.css">
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/fontawesome/regular.min.css">
     
     
     
@@ -161,11 +151,89 @@
                                 
                             </li>
                     
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/archives"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-archive"></i>
+                                        
+                                        归档
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    target="_blank" rel="noopener" href="https://status.pppfz.com/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-chart-bar"></i>
+                                        
+                                        状态
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown" 
+                                    href="#" onClick="return false;">
+                                    
+                                        
+                                            <i class="fa-regular fa-user"></i>
+                                        
+                                        关于&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                    
+                                        <li>
+                                        <a href="/about/about.html">ME
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a target="_blank" rel="noopener" href="https://github.com/pppfz">GITHUB
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a target="_blank" rel="noopener" href="https://gpt.pppfz.com">CHATGPT
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a href="/friends/friends.html">友情链接
+                                        </a>
+                                        </li>
+                                    
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
                     
                 </ul>
             </div>
             <!-- Mobile -->
             <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i></div>
                 
                 <div class="icon-item navbar-bar">
                     <div class="navbar-bar-middle"></div>
@@ -193,6 +261,69 @@
                     <!-- Submenu -->
                     
             
+                
+                    <li class="drawer-navbar-item flex-center">
+                        <a class="" 
+                        href="/archives"  >
+                             
+                                
+                                    <i class="fa-regular fa-archive"></i>
+                                
+                                归档
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item flex-center">
+                        <a class="" 
+                        target="_blank" rel="noopener" href="https://status.pppfz.com/"  >
+                             
+                                
+                                    <i class="fa-regular fa-chart-bar"></i>
+                                
+                                状态
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item flex-center">
+                        <a class="has-dropdown" 
+                        href="#" onClick="return false;">
+                            
+                                
+                                    <i class="fa-regular fa-user"></i>
+                                
+                                关于&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                              
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" href="/about/about.html">ME</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" target="_blank" rel="noopener" href="https://github.com/pppfz">GITHUB</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" target="_blank" rel="noopener" href="https://gpt.pppfz.com">CHATGPT</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" href="/friends/friends.html">友情链接</a>
+                            </li>
+                        
+                    
+            
 
         </ul>
     </div>
@@ -216,7 +347,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">test</h1>
+                <h1 class="article-title-regular">内网穿透原理</h1>
             
             </div>
             
@@ -225,7 +356,7 @@
         
             <div class="article-header">
                 <div class="avatar">
-                    <img src="/images/redefine-avatar.svg">
+                    <img src="/images/avatar.jpg">
                 </div>
                 <div class="info">
                     <div class="author">
@@ -245,8 +376,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-08-15 16:09:43</span>
-            <span class="mobile">2023-08-15 16:09:43</span>
+            <span class="desktop">2023-08-16 19:32:30</span>
+            <span class="mobile">2023-08-16 19:32:30</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -258,7 +389,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/test%E7%B1%BB/">test类</a>&nbsp;
+                        <a href="/tags/%E7%BD%91%E7%BB%9C/">网络</a>&nbsp;
                     </li>
                 
             </ul>
@@ -407,12 +538,12 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> test</li>
+        <li><strong>标题:</strong> 内网穿透原理</li>
         <li><strong>作者:</strong> The PPPFZ</li>
         <li><strong>创建于:</strong> 2023-08-15 16:04:43</li>
         
             <li>
-                <strong>更新于:</strong> 2023-08-15 16:09:43
+                <strong>更新于:</strong> 2023-08-16 19:32:30
             </li>
         
         <li>
@@ -431,7 +562,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/test%E7%B1%BB/">#test类</a>&nbsp;
+                        <a href="/tags/%E7%BD%91%E7%BB%9C/">#网络</a>&nbsp;
                     </li>
                 
             </ul>
@@ -441,6 +572,21 @@
 
         
             <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/08/16/Log4J2-RCE%E6%BC%8F%E6%B4%9E/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Log4J2-RCE漏洞</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
                 
                 
                     <div class="article-next">
@@ -514,7 +660,7 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">test</div>
+        <div class="page-title">内网穿透原理</div>
         <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E5%8E%9F%E7%90%86"><span class="nav-text">一、内网穿透原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="nav-text">1、内网穿透</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E9%9A%A7%E9%81%93%E6%8A%80%E6%9C%AF"><span class="nav-text">2、隧道技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%90%84%E7%B1%BB%E5%B7%A5%E5%85%B7"><span class="nav-text">3、各类工具</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%9E%84%E5%BB%BA%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">二、构建实验环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E7%BD%91%E7%BB%9C%E6%9E%84%E6%88%90"><span class="nav-text">1、网络构成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E9%85%8D%E7%BD%AE%E8%A1%A5%E5%85%85%E7%9F%A5%E8%AF%86"><span class="nav-text">2、配置补充知识</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-text">三、内网穿透-端口转发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8netsh%E8%BF%9B%E8%A1%8C%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-text">使用netsh进行端口转发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-text">1、配置端口转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%B5%8B%E8%AF%95%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-text">2、测试端口转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E6%B8%85%E9%99%A4%E8%BD%AC%E5%8F%91%E8%A7%84%E5%88%99"><span class="nav-text">3、清除转发规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81Linux%E4%B8%8A%E7%9A%84%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-text">4、Linux上的端口转发</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Meterpreter%E8%BF%9B%E8%A1%8C%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-text">使用Meterpreter进行端口转发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E4%B8%BA%E4%BB%A3%E7%90%86%E4%B8%BB%E6%9C%BA%E7%94%9F%E6%88%90%E6%9C%A8%E9%A9%AC"><span class="nav-text">1、为代理主机生成木马</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E4%B8%BA%E4%BB%A3%E7%90%86%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-text">2、为代理主机配置端口转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%9C%A8Kali%E4%B8%8A%E7%9B%B4%E6%8E%A5%E8%AE%BF%E9%97%AElocalhost-8889"><span class="nav-text">3、在Kali上直接访问localhost:8889</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E5%9C%A8Kali%E4%B8%8A%E8%AE%BF%E9%97%AEWindows7%E7%9A%84%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2"><span class="nav-text">4、在Kali上访问Windows7的远程桌面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Meterpreter%E5%AE%9E%E7%8E%B0%E6%AD%A3%E5%90%91%E8%BF%9E%E6%8E%A5"><span class="nav-text">使用Meterpreter实现正向连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E7%94%9F%E6%88%90%E6%AD%A3%E5%90%91%E5%90%8E%E9%97%A8"><span class="nav-text">1、生成正向后门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E8%BF%90%E8%A1%8C%E4%BB%A5%E4%B8%8B%E6%8C%87%E4%BB%A4%E5%AE%8C%E6%88%90%E6%AD%A3%E5%90%91%E8%BF%9E%E6%8E%A5"><span class="nav-text">2、运行以下指令完成正向连接</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F-%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84"><span class="nav-text">四、内网穿透-端口映射</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8frp%E8%BF%9B%E8%A1%8C%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84"><span class="nav-text">使用frp进行端口映射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81SSH%E6%9C%8D%E5%8A%A1"><span class="nav-text">1、SSH服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81HTTP%E6%9C%8D%E5%8A%A1"><span class="nav-text">2、HTTP服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%BC%80%E5%90%AFDashboard"><span class="nav-text">3、开启Dashboard</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E4%B8%B4%E6%97%B6%E5%BC%80%E5%90%AFhttp%E6%9C%8D%E5%8A%A1"><span class="nav-text">五、临时开启http服务</span></a></li></ol>
 
     </div>
@@ -669,21 +815,40 @@
 
 
     
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
 
 
 </main>
 
-
-<script src="/js/libs/Swup.min.js"></script>
-
-<script src="/js/libs/SwupSlideTheme.min.js"></script>
-
-<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
-
-<script src="/js/libs/SwupProgressPlugin.min.js"></script>
-
-<script src="/js/libs/SwupScrollPlugin.min.js"></script>
-
+<script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/Swup.min.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/SwupSlideTheme.min.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/SwupScriptsPlugin.min.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/SwupProgressPlugin.min.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/SwupScrollPlugin.min.js"></script>
 <script>
     const swup = new Swup({
         plugins: [
@@ -715,53 +880,29 @@
 
 
 
+<script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/utils.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/main.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/layouts/navbarShrink.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/tools/scrollTopBottom.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/tools/lightDarkSwitch.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/layouts/categoryList.js"></script>
 
-<script src="/js/utils.js"></script>
 
-<script src="/js/main.js"></script>
-
-<script src="/js/layouts/navbarShrink.js"></script>
-
-<script src="/js/tools/scrollTopBottom.js"></script>
-
-<script src="/js/tools/lightDarkSwitch.js"></script>
-
-<script src="/js/layouts/categoryList.js"></script>
+    <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/tools/localSearch.js"></script>
 
 
 
-
-
-    
-<script src="/js/tools/codeBlock.js"></script>
+    <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/tools/codeBlock.js"></script>
 
 
 
-
-    
-<script src="/js/layouts/lazyload.js"></script>
+    <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/layouts/lazyload.js"></script>
 
 
 
-
-    
-<script src="/js/tools/runtime.js"></script>
-
-    
-<script src="/js/libs/odometer.min.js"></script>
-
-    
-<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+    <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/tools/runtime.js"></script>
+    <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/odometer.min.js"></script>
+    <link rel="stylesheet" href="//npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/assets/odometer-theme-minimal.css">
 
 
 
-
-  
-<script src="/js/libs/Typed.min.js"></script>
-
-  
-<script src="/js/plugins/typed.js"></script>
-
+  <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/Typed.min.js"></script>
+  <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/plugins/typed.js"></script>
 
 
 
@@ -770,15 +911,7 @@
 
 <div class="post-scripts" data-swup-reload-script>
     
-        
-<script src="/js/tools/tocToggle.js"></script>
-
-<script src="/js/layouts/toc.js"></script>
-
-<script src="/js/libs/anime.min.js"></script>
-
-<script src="/js/plugins/tabs.js"></script>
-
+        <script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/tools/tocToggle.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/layouts/toc.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/libs/anime.min.js"></script><script src="https://npm.elemecdn.com/hexo-theme-redefine@2.3.0/source/js/plugins/tabs.js"></script>
     
 </div>
 
