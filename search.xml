@@ -377,4 +377,177 @@
         <tag>ChatGPT</tag>
       </tags>
   </entry>
+  <entry>
+    <title>安全手册</title>
+    <url>/2023/09/19/%E5%AE%89%E5%85%A8%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<p>网络安全主要分为两大部分：攻击部分和防御部分</p>
+<h1 id="一、攻击部分"><a href="#一、攻击部分" class="headerlink" title="一、攻击部分"></a>一、攻击部分</h1><h2 id="1、攻击步骤与对应的常用工具"><a href="#1、攻击步骤与对应的常用工具" class="headerlink" title="1、攻击步骤与对应的常用工具"></a>1、攻击步骤与对应的常用工具</h2><ul>
+<li>信息采集<ul>
+<li>网络信息：IP地址、域名信息，子域名，敏感目录，端口服务，DNS服务器、旁站服务，操作系统及提供服务的软件版本，外部网络拓扑结构，网络服务供应商，源代码， Robots文件探测，备案查询，微信小程序支付宝小程序，SSL&#x2F;TLS证书查询，Google Hacking</li>
+<li>物理信息：公司注册信息、组织结构、电话号段、网络或安全管理员及联系方式、地理位置等，以便开展实施社工和物理攻击；业务逻辑</li>
+<li>获取真实IP<ul>
+<li>NMAP，<a class="link"   href="https://github.com/robertdavidgraham/masscan" >Masscan <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>站长工具：<a class="link"   href="https://ping.chinaz.com/" >https://ping.chinaz.com/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>微步在线查询：<a class="link"   href="https://x.threatbook.com/" >https://x.threatbook.com/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>外网访问，对比分析</li>
+</ul>
+</li>
+<li>域名信息<ul>
+<li>子域名：Layer子域名挖掘机；<a class="link"   href="https://github.com/shmilylty/OneForAll" >OneForAll <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>网站路径扫描：御剑，WWWSCAN，<a class="link"   href="https://github.com/deibit/cansina" >cansina <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>WEB应用漏洞扫描：AWVS、APPSCAN、<a class="link"   href="https://github.com/sqlmapproject/sqlmap" >SQLMap <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、<a class="link"   href="https://github.com/s0md3v/XSStrike" >XSStrike-XSS漏洞扫描 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、<a class="link"   href="https://www.kali.org/tools/dirb/" >网页内容扫描器-dirb(Kali内置) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、XRay+Rad</li>
+<li>Google Hacking：特殊语法搜索</li>
+<li>Whois：<a class="link"   href="https://who.is/" >https://who.is/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> | <a class="link"   href="http://tool.chinaz.com/ipwhois" >http://tool.chinaz.com/ipwhois <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> | nslookup</li>
+<li>网站指纹信息：Wappalyzer指纹识别工具；<a class="link"   href="https://www.yunsee.cn/" >https://www.yunsee.cn/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>源代码：<a class="link"   href="https://github.com/" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 源代码信息泄露</li>
+<li><a class="link"   href="https://www.zoomeye.org/" >钟馗之眼 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>；<a class="link"   href="https://fofa.info/" >FOFA网络空间测绘 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>；<a class="link"   href="https://www.shodan.io/" >Shodan <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+</ul>
+</li>
+<li>企业真实信息（社工库）<ul>
+<li><a class="link"   href="https://www.iculture.cc/sgk" >https://www.iculture.cc/sgk <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a class="link"   href="https://sgk66.cc/search.html" >https://sgk66.cc/search.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a class="link"   href="https://privacy.aiuys.com/" >https://privacy.aiuys.com/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>telegram</li>
+</ul>
+</li>
+<li>参考链接：<a class="link"   href="https://www.freebuf.com/articles/web/283684.html" >https://www.freebuf.com/articles/web/283684.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+</ul>
+</li>
+<li>已知CVE漏洞攻击利用<ul>
+<li>漏洞披露平台：<a class="link"   href="https://www.cnvd.org.cn/" >中国国家漏洞库-CNDV <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://www.cve.org/" >CVE <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://www.metasploit.com/" >metasploit <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>主机漏洞扫描：Nessus（收费）</li>
+<li>抓包分析：wireshark，科来，<a class="link"   href="https://www.ypojie.com/10191.html" >Fiddler <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>SQL注入：Sqlmap</li>
+<li>代码审计：<a class="link"   href="https://rips-scanner.sourceforge.net/" >RIPS - 静态分析 PHP 代码  <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、Fortify SCA(收费)</li>
+<li>集成攻击平台：Kali，Burpsuite，Metasploit，Cobalt Strike（组队且收费）</li>
+<li>反编译调试工具：IDA PRO，Onlydbg，<a class="link"   href="https://x64dbg.com/" >x64dbg <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> （其他参考<a class="link"   href="https://www.52pojie.cn/forum-4-1.html" >吾爱破解 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>）</li>
+<li>Shell连接工具：中国菜刀，蚁剑，Behinder(冰蝎)，<a class="link"   href="https://github.com/BeichenDream/Godzilla" >Godzilla: 哥斯拉  <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://learn.microsoft.com/en-us/sysinternals/downloads/pstools" >PSTool <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>系统hash破解：<a class="link"   href="https://www.kali.org/tools/hydra/" >暴力破解工具-Hydra(Kali内置) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://www.kali.org/tools/medusa/" >暴力破解器-Medusa(Kali内置) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> ，pwdump，Shadow，LC5&#x2F;JOHN，<a class="link"   href="https://hashes.com/zh/decrypt/hash" >在线破解Hash <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>内网抓取hash：WCE，Mimikatz(抓取登录过主机的用户)，Procdump+mimikatz</li>
+<li>网络已公开的各类成熟exp：strusts2工具集，JBOSS反序列化工具，MS08-067等</li>
+</ul>
+</li>
+<li>旁站攻击<ul>
+<li>IP 反查：<a class="link"   href="https://tools.ipip.net/ipdomain.php" >ipip <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>；<a class="link"   href="https://www.ip66.net/" >ip66 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://stool.chinaz.com/same" >站长工具 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+</ul>
+</li>
+<li>技术类攻击<ul>
+<li><a class="link"   href="https://owasp.org/www-project-top-ten/" >OWASP 漏洞 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>Web攻击、代码审计、各种协议攻击、系统攻击、MSF</li>
+<li>逻辑漏洞</li>
+<li>持续跟踪</li>
+<li>日常运营+特定项目</li>
+</ul>
+</li>
+<li>花钱购买0Day或NDay</li>
+<li>非技术类攻击</li>
+</ul>
+<p>参考文章：<a href="#">1 渗透测试步骤和思路</a></p>
+<h1 id="二、防御部分"><a href="#二、防御部分" class="headerlink" title="二、防御部分"></a>二、防御部分</h1><ul>
+<li><p>网络通信层防御</p>
+<ul>
+<li>防火墙的配置：禁止非必要通信端口<ul>
+<li>windows</li>
+<li>Linux</li>
+</ul>
+</li>
+<li>通信流量的监控分析<ul>
+<li>Suricata+Elastic</li>
+</ul>
+</li>
+<li>端口伪装<ul>
+<li><a class="link"   href="https://pkgs.org/download/knock-server" >Knock-server Download (RPM) (pkgs.org) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a href="#">7 使用knockd隐藏端口</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>应用服务层防御</p>
+<ul>
+<li>安全配置项<ul>
+<li>服务器：Nginx，Apache，Cloudflare Server，LiteSpeed，Microsoft IIS<ul>
+<li>Apache（阿帕奇）</li>
+<li>Nginx</li>
+<li>IIS（Internet Information Services）</li>
+</ul>
+</li>
+<li>数据库<ul>
+<li>MySQL</li>
+<li>SQL Server</li>
+<li>Oracle</li>
+<li>Access</li>
+<li>DB2</li>
+<li>PostgreSQL</li>
+<li>redis</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>WEB WAF<ul>
+<li><a class="link"   href="https://github.com/SpiderLabs/ModSecurity" >ModSecurity <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a class="link"   href="https://github.com/alexazhou/VeryNginx" >VeryNginx（已停更） <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+</ul>
+</li>
+<li>邮件安全网关</li>
+<li>补丁、漏洞规则更新</li>
+<li>源代码审计检查<ul>
+<li>第三方库的形式、开发框架内置的代码规范、程序员的安全开发标准、代码审计、代码静态扫描</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>操作系统层防御</p>
+<ul>
+<li><p>敏感行为监控</p>
+<ul>
+<li>wazuh</li>
+</ul>
+</li>
+<li><p>入侵排查</p>
+<ul>
+<li><p>linux（参考文章：</p>
+<p>应急响应——Linux入侵排查</p>
+<p>）</p>
+<ul>
+<li>首先监测用户账号安全，比如新增的账号、可疑账号，重点查看可以远程登录的账号以及高权限账号。</li>
+<li>利用linux的<code>history</code>指令查看历史linux指令，<code>uptime</code>指令查看登录多久、多少用户。</li>
+<li>检查异常端口和进程，<code>netstat</code>检查异常端口，<code>ps</code>检查异常进程，可以观看资源占用的进程id来判断是否有挖矿木马等嫌疑。</li>
+<li>检查linux的启动项和系统的定时任务crontab，<code>crontab -l</code>查看是否有异常的任务编写进来。</li>
+<li>检查linux的日志信息<code>/var/log/</code>一些系统日志信息、安全日志等。</li>
+<li>自动化查杀软件，在线查杀工具，查杀脚本来查杀。<ul>
+<li>Linux主机排查：<a class="link"   href="https://github.com/grayddq/GScan" >grayddq&#x2F;GScan <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a class="link"   href="https://blog.csdn.net/icanflyingg/article/details/123357607" >rkhunter（Rootkit猎手）安装使用 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a class="link"   href="https://www.clamav.net/" >ClamAVNet <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>：<a class="link"   href="https://zhuanlan.zhihu.com/p/266731354" >Linux病毒扫描工具ClamAV（Clam AntiVirus）安装使用 - 知乎 (zhihu.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>windows</p>
+<ul>
+<li><a class="link"   href="https://zhuanlan.zhihu.com/p/608654371" >应急响应篇：windows入侵排查 - 知乎 (zhihu.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>杀毒软件</p>
+</li>
+<li><p>安全配置项</p>
+</li>
+<li><p>系统补丁</p>
+</li>
+</ul>
+</li>
+<li><p>综合防御</p>
+<ul>
+<li>蜜罐：<a class="link"   href="https://hfish.net/#/" >反制溯源_欺骗防御_主动防御-HFish免费蜜罐平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>堡垒机：<a class="link"   href="https://www.jumpserver.org/" >JumpServer - 开源堡垒机 - 官网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>硬件和软件：网闸、堡垒机、蜜罐、漏扫、态势感知、威胁情报、APT检测、数据库审记…</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>网络安全</tag>
+      </tags>
+  </entry>
 </search>
