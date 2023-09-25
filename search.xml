@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Hello World</title>
+    <url>/2023/08/15/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a class="link"   href="https://hexo.io/" >Hexo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>! This is your very first post. Check <a class="link"   href="https://hexo.io/docs/" >documentation <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   href="https://hexo.io/docs/troubleshooting.html" >troubleshooting <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> or you can ask me on <a class="link"   href="https://github.com/hexojs/hexo/issues" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/writing.html" >Writing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/server.html" >Server <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/generating.html" >Generating <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure></div>
+
+<p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>Log4J2-RCE漏洞</title>
     <url>/2023/08/16/Log4J2-RCE%E6%BC%8F%E6%B4%9E/</url>
     <content><![CDATA[<h1 id="一、漏洞简介"><a href="#一、漏洞简介" class="headerlink" title="一、漏洞简介"></a>一、漏洞简介</h1><p>Apache Log4j2是一个基于java的日志记录工具，当前被广泛应用于业务系统开发，开发者可以利用该工具将程序的输入输出信息进行日志记录。</p>
@@ -101,24 +119,6 @@
       <tags>
         <tag>漏洞</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2023/08/15/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a class="link"   href="https://hexo.io/" >Hexo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>! This is your very first post. Check <a class="link"   href="https://hexo.io/docs/" >documentation <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   href="https://hexo.io/docs/troubleshooting.html" >troubleshooting <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> or you can ask me on <a class="link"   href="https://github.com/hexojs/hexo/issues" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/writing.html" >Writing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/server.html" >Server <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/generating.html" >Generating <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-]]></content>
   </entry>
   <entry>
     <title>内网穿透原理</title>
@@ -248,133 +248,6 @@
       </categories>
       <tags>
         <tag>内网</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>搭建ChatGPT-Web-Site</title>
-    <url>/2023/08/21/%E6%90%AD%E5%BB%BAChatGPT-Web-Site/</url>
-    <content><![CDATA[<h1 id="一、注册Github账号"><a href="#一、注册Github账号" class="headerlink" title="一、注册Github账号"></a>一、注册Github账号</h1><p>注册页面：<a class="link"   href="https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=/&source=header-home" >Join GitHub · GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093422216.png"
-                      alt="image-20230821093422216"
-                ></p>
-<p>注册outlook.com邮箱：<a class="link"   href="https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=16&ct=1692581746&rver=7.0.6737.0&wp=MBI_SSL&wreply=https://outlook.live.com/owa/?nlp=1&RpsCsrfState=c1228fda-42fe-73c0-4d28-a96f6ff027d5&id=292841&aadredir=1&CBCXT=out&lw=1&fl=dob,flname,wld&cobrandid=90015" >登录你的 Microsoft 帐户 (live.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093702544.png"
-                      alt="image-20230821093702544"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093725539.png"
-                      alt="image-20230821093725539"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093809545.png"
-                      alt="image-20230821093809545"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093912580.png"
-                      alt="image-20230821093912580"
-                ></p>
-<h1 id="二、Fork目标项目"><a href="#二、Fork目标项目" class="headerlink" title="二、Fork目标项目"></a>二、Fork目标项目</h1><p>注册完成Github后，打开项目网址：</p>
-<p><a class="link"   href="https://github.com/Yidadaa/ChatGPT-Next-Web" >Yidadaa&#x2F;ChatGPT-Next-Web: A well-designed cross-platform ChatGPT UI (Web &#x2F; PWA &#x2F; Linux &#x2F; Win &#x2F; MacOS). 一键拥有你自己的跨平台 ChatGPT 应用。 (github.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821094211414.png"
-                      alt="image-20230821094211414"
-                ></p>
-<p>第二部点击完成后弹出的页面，什么都不用修改直接看下面的保存即可。</p>
-<h1 id="三、申请OpenAI的API"><a href="#三、申请OpenAI的API" class="headerlink" title="三、申请OpenAI的API"></a>三、申请OpenAI的API</h1><p><strong>打开openai官网：</strong>  <a class="link"   href="https://openai.com/" >OpenAI <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821095814843.png"
-                      alt="image-20230821095814843"
-                ></p>
-<p><strong>登录这个网址获取API：</strong> <a class="link"   href="https://platform.openai.com/account/api-keys" >API keys - OpenAI API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>先看看有没有免费的额度</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821101853186.png"
-                      alt="image-20230821101853186"
-                ></p>
-<p>如果没有是需要绑卡的（以前有免费送的体验额度，不知道现在还有没有，如果有就暂时不用绑卡了）</p>
-<p>如果没有额度，就要绑卡，卡要申请国外的卡，推荐使用：<strong>OneKey Card</strong></p>
-<p>目前是公测期间需要填写邀请码激活： <a class="link"   href="https://card.onekey.so/?i=JD7FN6" >JD7FN6 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>注册教程：<a class="link"   href="https://help.onekey.so/hc/zh-cn/articles/6762124467343-%E5%A6%82%E4%BD%95%E5%BC%80%E9%80%9A%E5%B9%B6%E4%BD%BF%E7%94%A8-OneKey-Card" >如何开通并使用 OneKey Card – OneKey - 帮助中心 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821100850484.png"
-                      alt="image-20230821100850484"
-                ></p>
-<p>绑卡地址：<a class="link"   href="https://platform.openai.com/account/billing/payment-methods" >Payment methods - OpenAI API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821101133297.png"
-                      alt="image-20230821101133297"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821100101484.png"
-                      alt="image-20230821100101484"
-                ></p>
-<h1 id="四、部署项目"><a href="#四、部署项目" class="headerlink" title="四、部署项目"></a>四、部署项目</h1><p>使用说明文档：<a class="link"   href="https://github.com/Yidadaa/ChatGPT-Next-Web/blob/main/README_CN.md#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8" >ChatGPT-Next-Web&#x2F;README_CN.md at main · Yidadaa&#x2F;ChatGPT-Next-Web (github.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821094532937.png"
-                      alt="image-20230821094532937"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821094650715.png"
-                      alt="image-20230821094650715"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821095253362.png"
-                      alt="image-20230821095253362"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821095454536.png"
-                      alt="image-20230821095454536"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821102211638.png"
-                      alt="image-20230821102211638"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821102340925.png"
-                      alt="image-20230821102340925"
-                ></p>
-]]></content>
-      <categories>
-        <category>网站</category>
-      </categories>
-      <tags>
-        <tag>ChatGPT</tag>
       </tags>
   </entry>
   <entry>
@@ -546,8 +419,138 @@
 </li>
 </ul>
 ]]></content>
+      <categories>
+        <category>漏洞</category>
+      </categories>
       <tags>
         <tag>网络安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>搭建ChatGPT-Web-Site</title>
+    <url>/2023/08/21/%E6%90%AD%E5%BB%BAChatGPT-Web-Site/</url>
+    <content><![CDATA[<h1 id="一、注册Github账号"><a href="#一、注册Github账号" class="headerlink" title="一、注册Github账号"></a>一、注册Github账号</h1><p>注册页面：<a class="link"   href="https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=/&source=header-home" >Join GitHub · GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821093422216.png"
+                      alt="image-20230821093422216"
+                ></p>
+<p>注册outlook.com邮箱：<a class="link"   href="https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=16&ct=1692581746&rver=7.0.6737.0&wp=MBI_SSL&wreply=https://outlook.live.com/owa/?nlp=1&RpsCsrfState=c1228fda-42fe-73c0-4d28-a96f6ff027d5&id=292841&aadredir=1&CBCXT=out&lw=1&fl=dob,flname,wld&cobrandid=90015" >登录你的 Microsoft 帐户 (live.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821093702544.png"
+                      alt="image-20230821093702544"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821093725539.png"
+                      alt="image-20230821093725539"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821093809545.png"
+                      alt="image-20230821093809545"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821093912580.png"
+                      alt="image-20230821093912580"
+                ></p>
+<h1 id="二、Fork目标项目"><a href="#二、Fork目标项目" class="headerlink" title="二、Fork目标项目"></a>二、Fork目标项目</h1><p>注册完成Github后，打开项目网址：</p>
+<p><a class="link"   href="https://github.com/Yidadaa/ChatGPT-Next-Web" >Yidadaa&#x2F;ChatGPT-Next-Web: A well-designed cross-platform ChatGPT UI (Web &#x2F; PWA &#x2F; Linux &#x2F; Win &#x2F; MacOS). 一键拥有你自己的跨平台 ChatGPT 应用。 (github.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821094211414.png"
+                      alt="image-20230821094211414"
+                ></p>
+<p>第二部点击完成后弹出的页面，什么都不用修改直接看下面的保存即可。</p>
+<h1 id="三、申请OpenAI的API"><a href="#三、申请OpenAI的API" class="headerlink" title="三、申请OpenAI的API"></a>三、申请OpenAI的API</h1><p><strong>打开openai官网：</strong>  <a class="link"   href="https://openai.com/" >OpenAI <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821095814843.png"
+                      alt="image-20230821095814843"
+                ></p>
+<p><strong>登录这个网址获取API：</strong> <a class="link"   href="https://platform.openai.com/account/api-keys" >API keys - OpenAI API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>先看看有没有免费的额度</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821101853186.png"
+                      alt="image-20230821101853186"
+                ></p>
+<p>如果没有是需要绑卡的（以前有免费送的体验额度，不知道现在还有没有，如果有就暂时不用绑卡了）</p>
+<p>如果没有额度，就要绑卡，卡要申请国外的卡，推荐使用：<strong>OneKey Card</strong></p>
+<p>目前是公测期间需要填写邀请码激活： <a class="link"   href="https://card.onekey.so/?i=JD7FN6" >JD7FN6 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>注册教程：<a class="link"   href="https://help.onekey.so/hc/zh-cn/articles/6762124467343-%E5%A6%82%E4%BD%95%E5%BC%80%E9%80%9A%E5%B9%B6%E4%BD%BF%E7%94%A8-OneKey-Card" >如何开通并使用 OneKey Card – OneKey - 帮助中心 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821100850484.png"
+                      alt="image-20230821100850484"
+                ></p>
+<p>绑卡地址：<a class="link"   href="https://platform.openai.com/account/billing/payment-methods" >Payment methods - OpenAI API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821101133297.png"
+                      alt="image-20230821101133297"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821100101484.png"
+                      alt="image-20230821100101484"
+                ></p>
+<h1 id="四、部署项目"><a href="#四、部署项目" class="headerlink" title="四、部署项目"></a>四、部署项目</h1><p>使用说明文档：<a class="link"   href="https://github.com/Yidadaa/ChatGPT-Next-Web/blob/main/README_CN.md#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8" >ChatGPT-Next-Web&#x2F;README_CN.md at main · Yidadaa&#x2F;ChatGPT-Next-Web (github.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821094532937.png"
+                      alt="image-20230821094532937"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821094650715.png"
+                      alt="image-20230821094650715"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821095253362.png"
+                      alt="image-20230821095253362"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821095454536.png"
+                      alt="image-20230821095454536"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821102211638.png"
+                      alt="image-20230821102211638"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://blog.pppfz.com/assets/image-20230821102340925.png"
+                      alt="image-20230821102340925"
+                ></p>
+]]></content>
+      <categories>
+        <category>网站</category>
+      </categories>
+      <tags>
+        <tag>ChatGPT</tag>
       </tags>
   </entry>
 </search>
